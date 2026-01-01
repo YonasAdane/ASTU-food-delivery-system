@@ -4,7 +4,7 @@ import "./globals.css";
 import { Toaster } from "sonner";
 import HolyLoader from "holy-loader";
 import { ThemeProvider } from "next-themes";
-
+import { NuqsAdapter } from 'nuqs/adapters/next/app'
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
@@ -39,7 +39,9 @@ export default function RootLayout({
             <HolyLoader 
             color="var(--primary)"
             />
-            {children}
+            <NuqsAdapter>
+              {children}
+            </NuqsAdapter>
           </ThemeProvider>
         <Toaster position="bottom-right" />
       </body>
