@@ -10,7 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 app.get('/', (req, res) => {
-  res.send('ASTU Food Delivery Backend is running  🚀');
+  res.send('ASTU Food Delivery Backend is running 🚀');
 });
 
 const PORT = process.env.PORT || 5000;
