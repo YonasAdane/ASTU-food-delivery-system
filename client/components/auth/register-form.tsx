@@ -60,7 +60,8 @@ export function RegisterForm() {
         return
       }
 
-      toast.success("Account created! Redirecting…")
+      toast.success(res.message)
+      form.reset()
     })
   }
 

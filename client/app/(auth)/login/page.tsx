@@ -88,25 +88,32 @@ export default function LoginPage() {
       router.refresh()
       setTimeout(() => router.push("/dashboard"), 1000)
     } catch (error) {
-      toast.error(getErrorMessage(error) ?? "Please try again later!")
+      console.log(error instanceof Error ? error.message : getErrorMessage(error))
+      toast.error(error instanceof Error ? error.message : getErrorMessage(error) ?? "Please try again later!")
     }
   }
 
   /* -------------------- Forgot Password -------------------- */
+  /* -------------------- Forgot Password -------------------- */
   async function onForgotPasswordSubmit(data: ForgotPasswordInputType) {
     try {
-      const response: any = {
-        success: true,
-        message: "Password reset link sent to your email.",
-      }
+      const res = await fetch("/api/auth/forgot-password", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(data),
+      })
 
-      if (response.success) {
-        toast.success(response.message)
+      const result = await res.json()
+
+      if (res.ok) {
+        toast.success(result.message || "Password reset link sent to your email.");
         setCurrentView("login")
         forgotPasswordForm.reset()
+      } else {
+        toast.error(result.message || "Something went wrong. Please try again!")
       }
-    } catch {
-      toast.error("We couldn't reset your password. Please try again!")
+    } catch (error) {
+      toast.error(getErrorMessage(error) ?? "Please try again later!")
     }
   }
 

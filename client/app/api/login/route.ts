@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   try {
     const { email, password } = await req.json();
     console.log({email, password});
-    const response = await fetch(`${process.env.API_URL}/auth/login`, {
+    const response = await fetch(`${process.env.API_URL}/api/auth/login`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ email, password }),
@@ -31,7 +31,7 @@ export async function POST(req: Request) {
     });
 
     const userData = await userRes.json() as {message:string,data:User};
-
+    console.log(userData)
     // Store JWT token securely in HttpOnly cookie
     cookieStore.set("token", access_token, {
       httpOnly: true,

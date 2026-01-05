@@ -74,7 +74,7 @@ export async function registerCustomer(
     // 4️⃣ Success
     return {
       success: true,
-      message: "Account created successfully",
+      message: "Verification email sent. Please check your inbox.",
     }
   } catch (error) {
     console.error("REGISTER ERROR:", error)
