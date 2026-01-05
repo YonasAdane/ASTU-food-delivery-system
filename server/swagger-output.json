@@ -12,7 +12,7 @@
     "https"
   ],
   "paths": {
-    "/api/delivery/auth/register": {
+    "/api/auth/register": {
       "post": {
         "description": "",
         "parameters": [
@@ -54,7 +54,7 @@
         }
       }
     },
-    "/api/delivery/auth/login": {
+    "/api/auth/login": {
       "post": {
         "description": "",
         "parameters": [
@@ -96,24 +96,15 @@
         }
       }
     },
-    "/api/delivery/auth/verify-otp": {
-      "post": {
+    "/api/auth/verify-email/{token}": {
+      "get": {
         "description": "",
         "parameters": [
           {
-            "name": "body",
-            "in": "body",
-            "schema": {
-              "type": "object",
-              "properties": {
-                "phone": {
-                  "example": "any"
-                },
-                "otp": {
-                  "example": "any"
-                }
-              }
-            }
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
           }
         ],
         "responses": {
@@ -123,16 +114,13 @@
           "400": {
             "description": "Bad Request"
           },
-          "404": {
-            "description": "Not Found"
-          },
           "500": {
             "description": "Internal Server Error"
           }
         }
       }
     },
-    "/api/delivery/auth/refresh-token": {
+    "/api/auth/refresh-token": {
       "post": {
         "description": "",
         "responses": {
@@ -148,7 +136,7 @@
         }
       }
     },
-    "/api/delivery/auth/forgot-password": {
+    "/api/auth/forgot-password": {
       "post": {
         "description": "",
         "parameters": [
@@ -160,9 +148,6 @@
               "properties": {
                 "email": {
                   "example": "any"
-                },
-                "phone": {
-                  "example": "any"
                 }
               }
             }
@@ -184,22 +169,22 @@
         }
       }
     },
-    "/api/delivery/auth/reset-password": {
+    "/api/auth/reset-password/{token}": {
       "post": {
         "description": "",
         "parameters": [
+          {
+            "name": "token",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
           {
             "name": "body",
             "in": "body",
             "schema": {
               "type": "object",
               "properties": {
-                "phone": {
-                  "example": "any"
-                },
-                "code": {
-                  "example": "any"
-                },
                 "newPassword": {
                   "example": "any"
                 }
@@ -220,7 +205,7 @@
         }
       }
     },
-    "/api/delivery/admin/users": {
+    "/admin/users": {
       "get": {
         "description": "",
         "parameters": [
@@ -249,7 +234,7 @@
         }
       }
     },
-    "/api/delivery/admin/users/roles": {
+    "/admin/users/roles": {
       "post": {
         "description": "",
         "parameters": [
@@ -278,7 +263,7 @@
         }
       }
     },
-    "/api/delivery/admin/restaurants/pending": {
+    "/admin/restaurants/pending": {
       "get": {
         "description": "",
         "parameters": [
@@ -307,7 +292,7 @@
         }
       }
     },
-    "/api/delivery/admin/restaurants/{id}/verify": {
+    "/admin/restaurants/{id}/verify": {
       "patch": {
         "description": "",
         "parameters": [
@@ -342,97 +327,7 @@
         }
       }
     },
-    "/api/delivery/admin/restaurants/{id}/reject": {
-      "patch": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "id",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "400": {
-            "description": "Bad Request"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/delivery/admin/restaurants": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/delivery/admin/stats": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/delivery/admin/users/{id}/suspend": {
+    "/admin/restaurants/{id}/reject": {
       "patch": {
         "description": "",
         "parameters": [
@@ -470,7 +365,7 @@
         }
       }
     },
-    "/api/delivery/admin/orders/complaints": {
+    "/admin/restaurants": {
       "get": {
         "description": "",
         "parameters": [
@@ -496,7 +391,97 @@
         }
       }
     },
-    "/api/delivery/admin/orders/{id}/resolve": {
+    "/admin/stats": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/users/{id}/suspend": {
+      "patch": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "id",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "400": {
+            "description": "Bad Request"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/orders/complaints": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/admin/orders/{id}/resolve": {
       "patch": {
         "description": "",
         "parameters": [
@@ -528,7 +513,7 @@
         }
       }
     },
-    "/api/delivery/customer/getCart": {
+    "/customer/getCart": {
       "get": {
         "description": "",
         "parameters": [
@@ -554,7 +539,7 @@
         }
       }
     },
-    "/api/delivery/customer/addToCart": {
+    "/customer/addToCart": {
       "post": {
         "description": "",
         "parameters": [
@@ -604,7 +589,7 @@
         }
       }
     },
-    "/api/delivery/customer/updateCart/{id}": {
+    "/customer/updateCart/{id}": {
       "put": {
         "description": "",
         "parameters": [
@@ -648,7 +633,7 @@
         }
       }
     },
-    "/api/delivery/customer/deleteCart/{restaurantId}": {
+    "/customer/deleteCart/{restaurantId}": {
       "delete": {
         "description": "",
         "parameters": [
@@ -680,7 +665,7 @@
         }
       }
     },
-    "/api/delivery/customer/removeFromCart/{id}": {
+    "/customer/removeFromCart/{id}": {
       "delete": {
         "description": "",
         "parameters": [
@@ -712,7 +697,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/register": {
+    "/restaurants/register": {
       "post": {
         "description": "",
         "parameters": [
@@ -757,7 +742,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/invite-driver": {
+    "/restaurants/invite-driver": {
       "post": {
         "description": "",
         "parameters": [
@@ -801,7 +786,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/assign-driver": {
+    "/restaurants/assign-driver": {
       "post": {
         "description": "",
         "parameters": [
@@ -845,7 +830,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/": {
+    "/restaurants/": {
       "get": {
         "description": "",
         "parameters": [
@@ -868,7 +853,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/{id}": {
+    "/restaurants/{id}": {
       "get": {
         "description": "",
         "parameters": [
@@ -900,7 +885,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/{restaurantId}/menu": {
+    "/restaurants/{restaurantId}/menu": {
       "post": {
         "description": "",
         "parameters": [
@@ -989,7 +974,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/{restaurantId}/menu/{itemId}": {
+    "/restaurants/{restaurantId}/menu/{itemId}": {
       "delete": {
         "description": "",
         "parameters": [
@@ -1129,7 +1114,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/{restaurantId}/inventory": {
+    "/restaurants/{restaurantId}/inventory": {
       "put": {
         "description": "",
         "parameters": [
@@ -1179,7 +1164,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/{restaurantId}/stats": {
+    "/restaurants/{restaurantId}/stats": {
       "get": {
         "description": "",
         "parameters": [
@@ -1211,42 +1196,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/{restaurantId}/active-drivers": {
-      "get": {
-        "description": "",
-        "parameters": [
-          {
-            "name": "restaurantId",
-            "in": "path",
-            "required": true,
-            "type": "string"
-          },
-          {
-            "name": "authorization",
-            "in": "header",
-            "type": "string"
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "OK"
-          },
-          "401": {
-            "description": "Unauthorized"
-          },
-          "403": {
-            "description": "Forbidden"
-          },
-          "404": {
-            "description": "Not Found"
-          },
-          "500": {
-            "description": "Internal Server Error"
-          }
-        }
-      }
-    },
-    "/api/delivery/restaurants/{restaurantId}/orders": {
+    "/restaurants/{restaurantId}/active-drivers": {
       "get": {
         "description": "",
         "parameters": [
@@ -1281,7 +1231,42 @@
         }
       }
     },
-    "/api/delivery/restaurants/{restaurantId}/orders/{orderId}": {
+    "/restaurants/{restaurantId}/orders": {
+      "get": {
+        "description": "",
+        "parameters": [
+          {
+            "name": "restaurantId",
+            "in": "path",
+            "required": true,
+            "type": "string"
+          },
+          {
+            "name": "authorization",
+            "in": "header",
+            "type": "string"
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": "OK"
+          },
+          "401": {
+            "description": "Unauthorized"
+          },
+          "403": {
+            "description": "Forbidden"
+          },
+          "404": {
+            "description": "Not Found"
+          },
+          "500": {
+            "description": "Internal Server Error"
+          }
+        }
+      }
+    },
+    "/restaurants/{restaurantId}/orders/{orderId}": {
       "get": {
         "description": "",
         "parameters": [
@@ -1322,7 +1307,7 @@
         }
       }
     },
-    "/api/delivery/restaurants/{restaurantId}/order-stats": {
+    "/restaurants/{restaurantId}/order-stats": {
       "get": {
         "description": "",
         "parameters": [
@@ -1354,7 +1339,7 @@
         }
       }
     },
-    "/api/delivery/orders/": {
+    "/orders/": {
       "post": {
         "description": "",
         "parameters": [
@@ -1401,7 +1386,7 @@
         }
       }
     },
-    "/api/delivery/orders/all": {
+    "/orders/all": {
       "get": {
         "description": "",
         "parameters": [
@@ -1430,7 +1415,7 @@
         }
       }
     },
-    "/api/delivery/orders/{orderId}/status": {
+    "/orders/{orderId}/status": {
       "post": {
         "description": "",
         "parameters": [
@@ -1480,7 +1465,7 @@
         }
       }
     },
-    "/api/delivery/orders/{id}/feedback": {
+    "/orders/{id}/feedback": {
       "post": {
         "description": "",
         "parameters": [
@@ -1530,7 +1515,7 @@
         }
       }
     },
-    "/api/delivery/drivers/register": {
+    "/drivers/register": {
       "post": {
         "description": "",
         "parameters": [
@@ -1572,7 +1557,7 @@
         }
       }
     },
-    "/api/delivery/drivers/{driverId}/orders": {
+    "/drivers/{driverId}/orders": {
       "get": {
         "description": "",
         "parameters": [
@@ -1607,7 +1592,7 @@
         }
       }
     },
-    "/api/delivery/drivers/{driverId}/location": {
+    "/drivers/{driverId}/location": {
       "post": {
         "description": "",
         "parameters": [
@@ -1690,7 +1675,7 @@
         }
       }
     },
-    "/api/delivery/drivers/status": {
+    "/drivers/status": {
       "patch": {
         "description": "",
         "parameters": [
@@ -1734,7 +1719,7 @@
         }
       }
     },
-    "/api/delivery/drivers/{driverId}/earnings": {
+    "/drivers/{driverId}/earnings": {
       "get": {
         "description": "",
         "parameters": [
@@ -1769,7 +1754,7 @@
         }
       }
     },
-    "/api/delivery/users/info": {
+    "/users/info": {
       "get": {
         "description": "",
         "parameters": [
@@ -1795,7 +1780,7 @@
         }
       }
     },
-    "/api/delivery/users/{id}/feedback": {
+    "/users/{id}/feedback": {
       "get": {
         "description": "",
         "parameters": [
