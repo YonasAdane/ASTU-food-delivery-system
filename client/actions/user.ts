@@ -2,28 +2,21 @@
 
 import { apiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { PaginatedApiResponse } from "@/types/api";
+import { PaginatedApi, PaginatedApiResponse } from "@/types/api";
 import { CreateUserFormValues, User } from "@/types/user";
 import { refresh, revalidateTag } from "next/cache";
 
-export async function getUsers(page = 1, search?: string, pageSize = 10, role?: string) {
+export async function getUsers(page = 1, search?: string, pageSize = 10, role?: string, isVerified?: string, status?: string, deleted?: string) {
   try {
-    const data:{data:User[]} = await apiClient({
+    const data = await apiClient<PaginatedApi<User>>({
       method: "GET",
-      endpoint: "/users",
-      query: { page, search, limit:pageSize,role },
+      endpoint: "/admin/users",
+      query: { page, search, limit:pageSize, role, isVerified, status, deleted },
       next: { tags: ["users"] }
     });
+    console.log(data)
 	// <PaginatedApi<User>>
-    return { success: true, message: "Users fetched successfully", data:{
-		data:data.data,
-		meta: {
-			total: 21,
-			page: 1,
-			limit: 10,
-			pages: 3
-		}
-}  } as PaginatedApiResponse<User>;
+    return { success: true, message: "Users fetched successfully", data  };
     // return { success: true, message: "Users fetched successfully", data };
   } catch (err) {
     console.error("error", err);
@@ -58,7 +51,7 @@ export async function updateUser(id: number | string, data: Partial<CreateUserFo
   try {
     const response = await apiClient<User>({
       method: 'PATCH',
-      endpoint: `/auth/register/${id}`,
+      endpoint: `/admin/users/${id}`,
       body: data,
     });
     revalidateTag("users","max");
@@ -66,24 +59,6 @@ export async function updateUser(id: number | string, data: Partial<CreateUserFo
     return {
       success: true,
       message: "User updated successfully",
-      data: response
-    };
-  } catch (err) {
-    return {
-      error: true,
-      message: getErrorMessage(err)
-    };
-  }
-}
-export async function UserDetais(id: number | string) {
-  try {
-    const response = await apiClient<User>({
-      method: 'GET',
-      endpoint: `/users/${id}`,
-    });
-    return {
-      success: true,
-      message: "User fetched successfully",
       data: response
     };
   } catch (err) {
@@ -105,6 +80,106 @@ export async function deleteUser(id: number | string) {
     return {
       success: true,
       message: "User deleted successfully",
+      data: response
+    };
+  } catch (err) {
+    return {
+      error: true,
+      message: getErrorMessage(err)
+    };
+  }
+}
+
+export async function restoreUser(id: number | string) {
+  try {
+    const response = await apiClient<User>({
+      method: 'PATCH',
+      endpoint: `/admin/users/${id}/restore`,
+    });
+    revalidateTag("users","max");
+    refresh();
+    return {
+      success: true,
+      message: "User restored successfully",
+      data: response
+    };
+  } catch (err) {
+    return {
+      error: true,
+      message: getErrorMessage(err)
+    };
+  }
+}
+
+export async function verifyUser(id: number | string, verify: boolean) {
+  try {
+    const response = await apiClient<User>({
+      method: 'PATCH',
+      endpoint: `/admin/users/${id}/verify`,
+      body: { verify },
+    });
+    revalidateTag("users","max");
+    refresh();
+    return {
+      success: true,
+      message: verify ? "User verified successfully" : "User unverified successfully",
+      data: response
+    };
+  } catch (err) {
+    return {
+      error: true,
+      message: getErrorMessage(err)
+    };
+  }
+}
+
+export async function resetUserPassword(id: number | string) {
+  try {
+    const response = await apiClient<User>({
+      method: 'POST',
+      endpoint: `/admin/users/${id}/reset-password`,
+      body: { email: "" }, // Placeholder for email
+    });
+    return {
+      success: true,
+      message: "Password reset initiated successfully",
+      data: response
+    };
+  } catch (err) {
+    return {
+      error: true,
+      message: getErrorMessage(err)
+    };
+  }
+}
+
+export async function invalidateUserSessions(id: number | string) {
+  try {
+    const response = await apiClient<User>({
+      method: 'PATCH',
+      endpoint: `/admin/users/${id}/invalidate-sessions`,
+    });
+    return {
+      success: true,
+      message: "User sessions invalidated successfully",
+      data: response
+    };
+  } catch (err) {
+    return {
+      error: true,
+      message: getErrorMessage(err)
+    };
+  }
+}
+export async function UserDetais(id: number | string) {
+  try {
+    const response = await apiClient<User>({
+      method: 'GET',
+      endpoint: `/users/${id}`,
+    });
+    return {
+      success: true,
+      message: "User fetched successfully",
       data: response
     };
   } catch (err) {
