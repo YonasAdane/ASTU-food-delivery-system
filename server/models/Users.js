@@ -42,6 +42,7 @@ const userSchema = new mongoose.Schema({
   deleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
   updatedAt: { type: Date, default: Date.now },
+  deletedAt: { type: Date },
   refreshToken: { type: String },
 });
 

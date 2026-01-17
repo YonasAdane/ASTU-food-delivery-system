@@ -132,7 +132,7 @@ export default function LoginPage() {
               className="flex items-center justify-center size-10 rounded-full bg-primary/20 backdrop-blur-sm border border-primary/30 text-primary">
               <span className="material-symbols-outlined text-2xl">lunch_dining</span>
             </div> */}
-            <span className="text-white font-bold text-xl tracking-wide">ASTU Food</span>
+            <span className="text-white font-extrabold text-xl tracking-wide">ASTU Food</span>
           </div>
           {/* <!-- Bottom Quote/Context --> */}
           <div className="max-w-md">
