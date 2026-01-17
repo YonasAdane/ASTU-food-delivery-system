@@ -16,11 +16,92 @@ const checkOwnership = (restaurant, user) => {
 // Get all verified, non-deleted restaurants
 const getAllRestaurants = async (req, res) => {
   try {
-    const restaurants = await Restaurant.find({
+    const {
+      page = 1,
+      limit = 10,
+      sort = 'recommended',
+      search = '',
+      area = '',
+      minDeliveryTime = '',
+      maxDeliveryTime = '',
+      isOpen = '',
+    } = req.query;
+
+    const query = {
       deleted: false,
       verified: true,
+    };
+
+    // Search by restaurant name
+    if (search) {
+      query.name = { $regex: search, $options: 'i' };
+    }
+
+    // Filter by area
+    if (area) {
+      query.area = area;
+    }
+
+    // Filter by delivery time range
+    if (minDeliveryTime || maxDeliveryTime) {
+      query.deliveryTime = {};
+      if (minDeliveryTime) {
+        query.deliveryTime.$gte = parseInt(minDeliveryTime);
+      }
+      if (maxDeliveryTime) {
+        query.deliveryTime.$lte = parseInt(maxDeliveryTime);
+      }
+    }
+
+    // Filter by open status
+    if (isOpen === 'true') {
+      query.isOpen = true;
+    } else if (isOpen === 'false') {
+      query.isOpen = false;
+    }
+
+    // Sorting
+    let sortQuery = {};
+    switch (sort) {
+      case 'rating':
+        sortQuery = { ratings: -1, reviewsCount: -1 };
+        break;
+      case 'delivery_time':
+        sortQuery = { deliveryTime: 1 };
+        break;
+      case 'reviews':
+        sortQuery = { reviewsCount: -1 };
+        break;
+      case 'newest':
+        sortQuery = { createdAt: -1 };
+        break;
+      default: // 'recommended'
+        sortQuery = { ratings: -1, reviewsCount: -1 };
+    }
+
+    const pageNum = parseInt(page);
+    const limitNum = parseInt(limit);
+    const skip = (pageNum - 1) * limitNum;
+
+    const [restaurants, total] = await Promise.all([
+      Restaurant.find(query)
+        .sort(sortQuery)
+        .skip(skip)
+        .limit(limitNum)
+        .select('-deleted -__v'),
+      Restaurant.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      restaurants,
+      pagination: {
+        currentPage: pageNum,
+        totalPages: Math.ceil(total / limitNum),
+        totalItems: total,
+        hasNext: pageNum * limitNum < total,
+        hasPrev: pageNum > 1,
+      },
     });
-    res.status(200).json(restaurants);
   } catch (err) {
     logger.error("Failed to fetch restaurants:", err);
     res.status(500).json({ error: "Failed to fetch restaurants." });
