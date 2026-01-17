@@ -1,8 +1,15 @@
+'use client'
+import { useRouter } from "next/navigation"
+import { useEffect } from "react"
 
-function CustomerPage() {
-	return (
-		<div>CustomerPage(@Yohanzack)</div>
-	)
+const CustomerPage = () => {
+    const router = useRouter()
+
+    useEffect(() => {
+        router.push('/customer/restaurant')
+    }, [router])
+
+    return null
 }
 
 export default CustomerPage
