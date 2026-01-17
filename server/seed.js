@@ -46,6 +46,7 @@ const restaurantSchema = Joi.object({
         description: Joi.string().allow(""),
         image: Joi.string().allow(""),
         inStock: Joi.boolean().default(true),
+        
       })
     )
     .required(),
