@@ -1,7 +1,6 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { Header } from "@/components/profile/header"
 import { ProfileSidebar } from "@/components/profile/profile-sidebar"
 import { ProfileCard } from "@/components/profile/profile-card"
 import { PersonalInformation } from "@/components/profile/personel-information"
