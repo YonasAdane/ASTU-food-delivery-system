@@ -2,21 +2,52 @@
 
 import Link from 'next/link'
 import { useState } from 'react'
-import { Menu, X } from 'lucide-react'
+import { usePathname } from 'next/navigation'
+import { Menu, X, Home, ShoppingBag, Wallet, Calendar } from 'lucide-react'
 import { ModeToggle } from '../common/modeToggle'
+import clsx from 'clsx'
 
 export default function Header() {
   const [open, setOpen] = useState(false)
+  const pathname = usePathname()
+
+  const isHomeActive =
+    pathname === '/' || pathname.startsWith('/customer/restaurant')
+
+  const navLinks = [
+    {
+      label: 'Home',
+      href: '/customer/restaurant',
+      icon: Home,
+      active: isHomeActive,
+    },
+    {
+      label: 'Orders',
+      href: '/customer/orders',
+      icon: ShoppingBag,
+      active: pathname.startsWith('/customer/orders'),
+    },
+    {
+      label: 'Wallet',
+      href: '/customer/wallet',
+      icon: Wallet,
+      active: pathname.startsWith('/customer/wallet'),
+    },
+    {
+      label: 'Meal Plan',
+      href: '/customer/meal-plan',
+      icon: Calendar,
+      active: pathname.startsWith('/customer/meal-plan'),
+    },
+  ]
 
   return (
-    <header
-      className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur
-      border-b border-slate-200 dark:border-slate-700 px-4 md:px-10 py-3 shadow-sm"
-    >
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur
+      border-b border-slate-200 dark:border-slate-700 px-4 md:px-10 py-3 shadow-sm">
       <div className="max-w-360 mx-auto flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="size-10 flex items-center justify-center text-primary bg-primary/10 rounded-full" />
+          <div className="size-10 rounded-full bg-primary/10" />
           <h2 className="text-xl font-bold hidden sm:block">ASTU Food</h2>
         </div>
 
@@ -30,35 +61,37 @@ export default function Header() {
 
         {/* Desktop Nav */}
         <nav className="hidden lg:flex gap-6">
-          <Link href="#" className="text-primary font-bold text-sm">
-            Home
-          </Link>
-          <Link href="#" className="text-sm">
-            Orders
-          </Link>
-          <Link href="#" className="text-sm">
-            Wallet
-          </Link>
-          <Link href="#" className="text-sm">
-            Meal Plan
-          </Link>
+          {navLinks.map(({ label, href, icon: Icon, active }) => (
+            <Link
+              key={label}
+              href={href}
+              className={clsx(
+                'flex items-center gap-2 text-sm transition-colors',
+                active
+                  ? 'text-primary font-bold'
+                  : 'text-muted-foreground hover:text-primary'
+              )}
+            >
+              <Icon size={18} className="text-primary" />
+              {label}
+            </Link>
+          ))}
         </nav>
 
-        {/* Right actions */}
+        {/* Right Actions */}
         <div className="flex items-center gap-3">
           <ModeToggle />
 
           {/* Profile */}
           <div className="flex items-center gap-2">
             <div className="size-8 rounded-full bg-gray-300" />
-            <span className="hidden sm:block text-sm font-bold">Jane Doe</span>
+            <span className="hidden sm:block text-sm font-bold">
+              Jane Doe
+            </span>
           </div>
 
           {/* Mobile Menu Button */}
-          <button
-            onClick={() => setOpen(!open)}
-            className="lg:hidden"
-          >
+          <button onClick={() => setOpen(!open)} className="lg:hidden">
             {open ? <X size={24} /> : <Menu size={24} />}
           </button>
         </div>
@@ -75,22 +108,22 @@ export default function Header() {
 
           {/* Mobile Nav */}
           <nav className="flex flex-col gap-3">
-            <Link
-              href="#"
-              onClick={() => setOpen(false)}
-              className="font-bold text-primary"
-            >
-              Home
-            </Link>
-            <Link href="#" onClick={() => setOpen(false)}>
-              Orders
-            </Link>
-            <Link href="#" onClick={() => setOpen(false)}>
-              Wallet
-            </Link>
-            <Link href="#" onClick={() => setOpen(false)}>
-              Meal Plan
-            </Link>
+            {navLinks.map(({ label, href, icon: Icon, active }) => (
+              <Link
+                key={label}
+                href={href}
+                onClick={() => setOpen(false)}
+                className={clsx(
+                  'flex items-center gap-3 text-sm py-2',
+                  active
+                    ? 'text-primary font-bold'
+                    : 'text-muted-foreground'
+                )}
+              >
+                <Icon size={18} className="text-primary" />
+                {label}
+              </Link>
+            ))}
           </nav>
         </div>
       )}
