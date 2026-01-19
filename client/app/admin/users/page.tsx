@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { getErrorMessage } from "@/lib/get-error-message";
 import UserActions from "@/components/users/user-actions";
+import { Avatar, AvatarFallback } from "@/components/ui/avatar";
 
 export default async function UsersPage({
   searchParams,
@@ -56,11 +57,11 @@ export default async function UsersPage({
               <TableHeader>
                 <TableRow>
                   <TableHead>Email</TableHead>
-                  <TableHead>Phone</TableHead>
+                  {/* <TableHead>Phone</TableHead> */}
                   <TableHead>Role</TableHead>
                   <TableHead>Verification</TableHead>
                   <TableHead>Driver Status</TableHead>
-                  <TableHead>Restaurant</TableHead>
+                  {/* <TableHead>Restaurant</TableHead> */}
                   <TableHead>Created</TableHead>
                   <TableHead>Account Status</TableHead>
                   <TableHead>Actions</TableHead>
@@ -70,8 +71,22 @@ export default async function UsersPage({
               <TableBody>
                 {res?.data?.data.map((user) => (
                   <TableRow key={user._id}>
-                    <TableCell className="font-semibold">{user.email}</TableCell>
-                    <TableCell>{user.phone}</TableCell>
+                    <TableCell className="font-semibold">
+                      <div className="flex items-center gap-2">
+                      <Avatar>
+                        <AvatarFallback className="bg-indigo-500/25 text-indigo-500">
+                          {user.email?.charAt(0).toUpperCase()}
+                          {user.email?.split("@")[0].at(-1)?.toUpperCase()}
+                        </AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <div>{user.email}</div>
+                        <div className="text-sm text-muted-foreground">{user.phone}</div>
+                      </div>
+
+                      </div>
+                    </TableCell>
+                    {/* <TableCell>{user.phone}</TableCell> */}
 
                     <TableCell>
                       <Badge variant="outline" className="capitalize">
@@ -99,9 +114,9 @@ export default async function UsersPage({
                       )}
                     </TableCell>
 
-                    <TableCell>
+                    {/* <TableCell>
                       {user.role === "driver" && user.restaurantId ? "Driver" : "-"}
-                    </TableCell>
+                    </TableCell> */}
 
                     <TableCell className="text-sm text-muted-foreground">
                       {formatDistanceToNow(new Date(user.createdAt))} ago

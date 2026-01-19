@@ -27,16 +27,7 @@ export function UserFilters() {
     <div className="flex justify-between p-6 border-b">
 
       <div className="flex flex-wrap gap-4  items-center">
-         {(role !== "all" || isVerified !== "all" || status !== "all" || deleted !== "false") && (
-            <Button variant={"outline"}
-              onClick={clearFilters}
-              className="shrink-0 gap-2 border-dashed"
-            >
-              <XCircle className="h-4 w-4" />
-            Clear
-            </Button>
-           
-          )}
+        
          {/* Quick Role Filter Buttons */}
         <div>
           {/* <label className="block text-sm font-medium mb-1">Quick Filter</label> */}
@@ -55,6 +46,16 @@ export function UserFilters() {
           </div>
 
         </div>
+         {(role !== "all" || isVerified !== "all" || status !== "all" || deleted !== "false") && (
+            <Button variant={"outline"}
+              onClick={clearFilters}
+              className="shrink-0 gap-2 border-dashed"
+            >
+              <XCircle className="h-4 w-4" />
+            Clear
+            </Button>
+           
+          )}
       </div>
 
       <div className="flex flex-wrap gap-4  items-center">
