@@ -2,6 +2,8 @@
 
 import { useRouter, useSearchParams } from 'next/navigation'
 import { useState, useEffect } from 'react'
+import LogoutAlert from '../common/logoutAlert'
+
 
 // TODO: Fetch areas dynamically from backend API
 // Example API call: GET /api/areas
@@ -235,6 +237,10 @@ export default function FilterSidebar() {
       >
         Apply Filters
       </button>
+      <div className="mt-auto">
+
+      <LogoutAlert/>
+      </div>
     </aside>
   )
 }
