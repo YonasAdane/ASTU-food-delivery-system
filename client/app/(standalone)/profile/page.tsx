@@ -1,12 +1,12 @@
 "use client"
 
-import { Header } from "@/components/customer-profile/header"
-import { ProfileSidebar } from "@/components/customer-profile/profile-sidebar"
-import { ProfileCard } from "@/components/customer-profile/profile-card"
-import { PersonalInformation } from "@/components/customer-profile/personel-information"
-import { AddressesCard } from "@/components/customer-profile/addresses-card"
-import { PaymentMethodsCard } from "@/components/customer-profile/payment-methods-card"
-import { SecurityCard } from "@/components/customer-profile/side-card"
+import { Header } from "@/components/profile/header"
+import { ProfileSidebar } from "@/components/profile/profile-sidebar"
+import { ProfileCard } from "@/components/profile/profile-card"
+import { PersonalInformation } from "@/components/profile/personel-information"
+import { AddressesCard } from "@/components/profile/addresses-card"
+import { PaymentMethodsCard } from "@/components/profile/payment-methods-card"
+import { SecurityCard } from "@/components/profile/side-card"
 import { Button } from "@/components/ui/button"
 
 export default function StandaloneProfilePage() {
