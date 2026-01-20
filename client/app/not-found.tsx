@@ -1,5 +1,6 @@
 "use client";
 import { Home, ArrowLeft, Search } from 'lucide-react';
+import Link from 'next/link';
 
 export default function NotFound() {
   const handleBack = () => {
@@ -22,7 +23,7 @@ export default function NotFound() {
           <h1 className="text-[12rem] font-black text-slate-200 dark:text-slate-800 select-none">404</h1>
           <div className="absolute inset-0 flex items-center justify-center">
             <div className="bg-white dark:bg-slate-800 p-6 rounded-3xl shadow-2xl border border-slate-100 dark:border-gray-700 animate-bounce">
-              <Search className="w-16 h-16 text-indigo-600" />
+              <Search className="w-16 h-16 text-primary" />
             </div>
           </div>
         </div>
@@ -42,7 +43,7 @@ export default function NotFound() {
           </button>
           <button
             onClick={handleHome}
-            className="flex items-center justify-center px-6 py-3 bg-indigo-600 dark:bg-indigo-500 text-white font-semibold rounded-xl hover:bg-indigo-700 dark:hover:bg-indigo-600 shadow-lg shadow-indigo-500/20 transition-all"
+            className="flex items-center justify-center px-6 py-3 bg-primary dark:bg-primary text-white font-semibold rounded-xl dark:hover:bg-primary shadow-lg shadow-primary/20 transition-all"
           >
             <Home className="w-4 h-4 mr-2" />
             Back to Home
@@ -52,9 +53,9 @@ export default function NotFound() {
         {/* Support Link */}
         <p className="mt-12 text-slate-500 dark:text-gray-400 text-sm">
           Need help?{' '}
-          <a href="#" className="text-indigo-600 dark:text-indigo-400 font-medium hover:underline">
+          <Link href="#" className="text-primary font-medium hover:underline">
             Contact Support
-          </a>
+          </Link>
         </p>
       </div>
     </div>

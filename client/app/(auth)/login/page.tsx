@@ -84,9 +84,21 @@ export default function LoginPage() {
       }
 
       setUser(result.user)
-      toast.success("Redirecting you to your dashboard!")
       router.refresh()
-      setTimeout(() => router.push("/dashboard"), 1000)
+      const redirectMap: Record<string, string> = {
+        customer: '/customer',
+        restaurant: '/restaurant',
+        driver: '/driver',
+        admin: '/admin',
+      };
+      toast.success("Redirecting you to your dashboard!")
+      const redirectTo = redirectMap[result.user.role];
+      if (redirectTo) {
+        console.log(redirectTo)
+        router.push(redirectTo)
+        // return NextResponse.redirect(new URL(redirectTo, req.nextUrl.origin));
+        // setTimeout(() => router.push(redirectTo), 1000)
+      }
     } catch (error) {
       console.log(error instanceof Error ? error.message : getErrorMessage(error))
       toast.error(error instanceof Error ? error.message : getErrorMessage(error) ?? "Please try again later!")
