@@ -93,6 +93,7 @@ export default function LoginPage() {
       };
       toast.success("Redirecting you to your dashboard!")
       const redirectTo = redirectMap[result.user.role];
+      console.log(result.user)
       if (redirectTo) {
         console.log(redirectTo)
         router.push(redirectTo)

@@ -26,7 +26,7 @@ const publicRoutes = ['/'];
  * Role → dashboard mapping
  */
 const roleRedirectMap: Record<string, string> = {
-  customer: '/customer',
+  customer: '/customer/restaurant',
   restaurant: '/restaurant',
   driver: '/driver',
   admin: '/admin',
