@@ -1,49 +1,62 @@
-'use client'
+"use client";
 
-import Link from 'next/link'
-import { useState } from 'react'
-import { usePathname } from 'next/navigation'
-import { Menu, X, Home, ShoppingBag, Wallet, Calendar } from 'lucide-react'
-import { ModeToggle } from '../common/modeToggle'
-import clsx from 'clsx'
+import Link from "next/link";
+import { useState } from "react";
+import { usePathname } from "next/navigation";
+import { Menu, X, Home, ShoppingBag, Wallet, Calendar } from "lucide-react";
+import { ModeToggle } from "../common/modeToggle";
+import { useUserStore } from "@/hooks/use-profile";
+import ProfileDropdown from "../users/profileDropdown";
+import clsx from "clsx";
+const generateAvatar = (name?: string, email?: string) => {
+  const displayName = name || email || "User";
 
+  const background = "6366f1";
+  const color = "fff";
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    displayName,
+  )}&background=${background}&color=${color}`;
+};
 export default function Header() {
-  const [open, setOpen] = useState(false)
-  const pathname = usePathname()
-
+  const [open, setOpen] = useState(false);
+  const [profileOpen, setProfileOpen] = useState(false);
+  const pathname = usePathname();
+  const user = useUserStore((state) => state.user);
   const isHomeActive =
-    pathname === '/' || pathname.startsWith('/customer/restaurant')
+    pathname === "/" || pathname.startsWith("/customer/restaurant");
 
   const navLinks = [
     {
-      label: 'Home',
-      href: '/customer/restaurant',
+      label: "Home",
+      href: "/customer/restaurant",
       icon: Home,
       active: isHomeActive,
     },
     {
-      label: 'Orders',
-      href: '/customer/orders',
+      label: "Orders",
+      href: "/customer/orders",
       icon: ShoppingBag,
-      active: pathname.startsWith('/customer/orders'),
+      active: pathname.startsWith("/customer/orders"),
     },
     {
-      label: 'Wallet',
-      href: '/customer/wallet',
+      label: "Wallet",
+      href: "/customer/wallet",
       icon: Wallet,
-      active: pathname.startsWith('/customer/wallet'),
+      active: pathname.startsWith("/customer/wallet"),
     },
     {
-      label: 'Meal Plan',
-      href: '/customer/meal-plan',
+      label: "Meal Plan",
+      href: "/customer/meal-plan",
       icon: Calendar,
-      active: pathname.startsWith('/customer/meal-plan'),
+      active: pathname.startsWith("/customer/meal-plan"),
     },
-  ]
+  ];
 
   return (
-    <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur
-      border-b border-slate-200 dark:border-slate-700 px-4 md:px-10 py-3 shadow-sm">
+    <header
+      className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur
+      border-b border-slate-200 dark:border-slate-700 px-4 md:px-10 py-3 shadow-sm"
+    >
       <div className="max-w-360 mx-auto flex items-center justify-between gap-4">
         {/* Logo */}
         <div className="flex items-center gap-3">
@@ -66,10 +79,10 @@ export default function Header() {
               key={label}
               href={href}
               className={clsx(
-                'flex items-center gap-2 text-sm transition-colors',
+                "flex items-center gap-2 text-sm transition-colors",
                 active
-                  ? 'text-primary font-bold'
-                  : 'text-muted-foreground hover:text-primary'
+                  ? "text-primary font-bold"
+                  : "text-muted-foreground hover:text-primary",
               )}
             >
               <Icon size={18} className="text-primary" />
@@ -79,16 +92,17 @@ export default function Header() {
         </nav>
 
         {/* Right Actions */}
+        {/* Right Actions */}
         <div className="flex items-center gap-3">
           <ModeToggle />
 
-          {/* Profile */}
-          <div className="flex items-center gap-2">
-            <div className="size-8 rounded-full bg-gray-300" />
-            <span className="hidden sm:block text-sm font-bold">
-              Jane Doe
-            </span>
-          </div>
+          <ProfileDropdown
+            avatar={generateAvatar(user?.email)}
+            email={user?.email}
+            phone={user?.phone}
+            role={user?.role}
+            createdAt={user?.createdAt}
+          />
 
           {/* Mobile Menu Button */}
           <button onClick={() => setOpen(!open)} className="lg:hidden">
@@ -114,10 +128,8 @@ export default function Header() {
                 href={href}
                 onClick={() => setOpen(false)}
                 className={clsx(
-                  'flex items-center gap-3 text-sm py-2',
-                  active
-                    ? 'text-primary font-bold'
-                    : 'text-muted-foreground'
+                  "flex items-center gap-3 text-sm py-2",
+                  active ? "text-primary font-bold" : "text-muted-foreground",
                 )}
               >
                 <Icon size={18} className="text-primary" />
@@ -128,5 +140,5 @@ export default function Header() {
         </div>
       )}
     </header>
-  )
+  );
 }
