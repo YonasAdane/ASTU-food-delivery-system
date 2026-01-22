@@ -14,7 +14,7 @@ const menuItems = [
 
 export function ProfileSidebar() {
   return (
-    <div className="w-64 bg-card rounded-xl p-6 h-fit border border-border">
+    <div className="w-64 bg-background rounded-xl p-6 h-fit border border-border">
   
       <div className="flex items-center gap-3 mb-6">
         <Avatar className="w-12 h-12 bg-muted">
@@ -36,8 +36,8 @@ export function ProfileSidebar() {
             className={cn(
               "w-full flex items-center gap-3 px-4 py-3 rounded-lg transition-colors text-left",
               item.active
-                ? "bg-muted text-[#f48c25]"
-                : "text-muted-foreground hover:bg-muted"
+                ? "bg-slate-800 text-slate-300"
+                : "text-muted-foreground hover:bg-slate-800"
             )}
           >
             <item.icon className="w-5 h-5" />
