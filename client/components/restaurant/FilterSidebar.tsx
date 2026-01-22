@@ -179,7 +179,7 @@ export default function FilterSidebar() {
 
   return (
     <>
-      <aside className="hidden lg:block w-72 sticky top-24 h-fit pr-8">
+      <aside className="hidden lg:block w-72 sticky top-24 h-fit pr-8 scroll-auto">
         {FilterContent}
       </aside>
 

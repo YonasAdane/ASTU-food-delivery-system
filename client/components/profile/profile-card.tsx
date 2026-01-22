@@ -66,7 +66,7 @@ export function ProfileCard({
   }
 
   return (
-    <div className="bg-card rounded-xl p-6 border border-border">
+    <div className="bg-background rounded-xl p-6 border border-border">
       <div className="flex items-center gap-6">
         <div className="relative">
           <Avatar 
