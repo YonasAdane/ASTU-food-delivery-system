@@ -1,3 +1,4 @@
+import FloatingCart from "@/components/restaurant/FloatingCart";
 import Header from "@/components/restaurant/Header";
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
@@ -11,6 +12,7 @@ export default function CustomerLayout({ children }: { children: React.ReactNode
 
       <div className="relative min-h-screen">
         <Header />
+        <FloatingCart />
         <main className="relative z-10">{children}</main>
       </div>
     </div>
