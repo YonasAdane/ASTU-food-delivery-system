@@ -3,7 +3,6 @@ const validate = require("../middlewares/validate");
 const {
   registerUserSchema,
   loginSchema,
-  otpSchema,
   forgotPasswordSchema,
   resetPasswordSchema,
 } = require("../validators/userValidator");
@@ -11,9 +10,8 @@ const {
 const {
   register,
   login,
-  verifyOTP,
+  verifyEmail,
   refreshToken,
-  logout,
   forgotPassword,
   resetPassword,
 } = require("../controllers/auth.controller");
@@ -21,9 +19,8 @@ const {
 const router = express.Router();
 router.post("/register", validate(registerUserSchema), register);
 router.post("/login", validate(loginSchema), login);
-router.post("/verify-otp", validate(otpSchema), verifyOTP);
+router.get("/verify-email/:token", verifyEmail);
 router.post("/refresh-token", refreshToken);
-router.post("/logout", logout);
 router.post("/forgot-password", validate(forgotPasswordSchema), forgotPassword);
-router.post("/reset-password", validate(resetPasswordSchema), resetPassword);
+router.post("/reset-password/:token", validate(resetPasswordSchema), resetPassword);
 module.exports = router;
