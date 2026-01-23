@@ -4,9 +4,9 @@ const logger = require("../utils/logger");
 const connectDB = async () => {
   try {
     await mongoose.connect(process.env.MONGO_URI);
-    logger.info("MongoDB connected successfully!");
+    logger.info("MongoDB Atlas connected successfully!");
   } catch (err) {
-    logger.error(`MongoDB connection error: ${err.message}`);
+    logger.error(`MongoDB Atlas connection error: ${err.message}`);
     if (process.env.NODE_ENV !== "test") {
       process.exit(1);
     } else {
