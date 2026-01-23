@@ -2,27 +2,21 @@ const User = require("../models/Users");
 const { generateToken, refreshToken } = require("../utils/generateToken");
 const bcrypt = require("bcryptjs");
 const { sendOTP, verifyOTP } = require("../utils/afroMessage");
-const { setOtp, getOtp, deleteOtp } = require("../utils/otpStore");
+const { client: redisClient } = require("../config/redis");
 const logger = require("../utils/logger");
 const jwt = require("jsonwebtoken");
+const sendEmail = require("../utils/email");
+const crypto = require("crypto");
 const { ref } = require("joi");
-
-const cookieOptions = () => {
-  const isProd = process.env.NODE_ENV === "production";
-  return {
-    httpOnly: true,
-    secure: isProd,
-    sameSite: isProd ? "none" : "lax",
-    path: "/",
-  };
-};
 
 exports.register = async (req, res) => {
   try {
     const { email, phone, password, restaurantId, role } = req.body;
     const userExist = await User.findOne({ $or: [{ email }, { phone }] });
     if (userExist)
-      return res.status(400).json({ message: "User alreaady exists" });
+      return res.status(400).json({ message: "User already exists" });
+
+    const verificationToken = crypto.randomBytes(20).toString("hex");
 
     const user = await User.create({
       email,
@@ -30,18 +24,37 @@ exports.register = async (req, res) => {
       password,
       restaurantId,
       role,
+      verificationToken,
     });
 
-    const { verificationCode, code } = await sendOTP(phone);
+    const verificationUrl = `${req.protocol}://${req.get(
+      "host"
+    )}/api/v1/auth/verify-email/${verificationToken}`; // This should ideally be the client URL, not the API URL directly if we want a frontend page. 
+    // BUT the requirement says "integrate in frontend", so the link should point to frontend page.
+    // Frontend URL: http://localhost:3000/verify-email?token=...
+    
+    // Let's assume CLIENT_URL or fallback to localhost:3000
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+    const frontendVerificationUrl = `${clientUrl}/verify-email/${verificationToken}`;
+
+    const message = `Please click on the link below to verify your email address:\n\n${frontendVerificationUrl}`;
 
     try {
-      await setOtp(phone, { code, verificationCode }, 300);
-    } catch (err) {
-      logger.error(`OTP store error: ${err.message}`);
+      await sendEmail({
+        email: user.email,
+        subject: "Email Verification",
+        message,
+      });
+    } catch (error) {
+      console.log("Email sending failed:", error);
+        user.verificationToken = undefined;
+        await user.save({ validateBeforeSave: false });
+        return res.status(500).json({ message: "Email could not be sent" });
     }
 
     res.status(200).json({
       status: "success",
+      message: "Verification email sent successfully",
       data: { userid: user._id, role: user.role },
     });
   } catch (error) {
@@ -50,42 +63,38 @@ exports.register = async (req, res) => {
   }
 };
 
-exports.verifyOTP = async (req, res) => {
+exports.verifyEmail = async (req, res) => {
   try {
-    const { phone, otp } = req.body;
-    const stored = await getOtp(phone);
-    if (!stored) {
-      return res.status(400).json({ message: "OTP expired or not found" });
-    }
+    const { token: verificationToken } = req.params;
 
-    const { code, verificationCode } = stored;
-    const isvalid = await verifyOTP(phone, verificationCode, otp);
-    if (!isvalid) {
-      return res.status(400).json({ message: "Invalid OTP" });
-    }
-
-    await deleteOtp(phone);
-
-    const user = await User.findOneAndUpdate(
-      { phone },
-      { isVerified: true },
-      { new: true }
-    );
+    // Use direct query since we stored hex string directly
+    const user = await User.findOne({ 
+      verificationToken
+    });
 
     if (!user) {
-      return res.status(404).json({ message: "User not found" });
+      return res.status(400).json({ message: "Invalid or expired token" });
     }
+
+    user.isVerified = true;
+    user.verificationToken = undefined;
+    await user.save();
 
     const token = generateToken(user);
     const refreshTokenn = refreshToken(user);
-    logger.info(refreshTokenn);
+    
     await User.updateOne({ _id: user._id }, { refreshToken: refreshTokenn });
 
-    res.cookie("token", token, cookieOptions());
-    res.cookie("refreshToken", refreshTokenn, cookieOptions());
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
+    res.cookie("refreshToken", refreshTokenn, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+    });
     res
       .status(200)
-
       .json({ status: "success", data: { userId: user._id, role: user.role } });
   } catch (err) {
     logger.error(err.message);
@@ -112,10 +121,8 @@ exports.login = async (req, res) => {
 
     // If phone not verified, send OTP and stop login process
     if (!user.isVerified) {
-      const { verificationCode, code } = await sendOTP(user.phone);
-      await setOtp(user.phone, { code, verificationCode }, 300); // 5 minutes
-      return res.status(403).json({
-        message: "Please verify your phone number first.",
+       return res.status(403).json({
+        message: "Please verify your email first.",
       });
     }
 
@@ -131,8 +138,19 @@ exports.login = async (req, res) => {
 
     // Set cookies
     // Set cookies
-    res.cookie("token", token, cookieOptions());
-    res.cookie("refreshToken", refreshTokenValue, cookieOptions());
+    res.cookie("token", token, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      path: "/",
+    });
+
+    res.cookie("refreshToken", refreshTokenValue, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: "none",
+      path: "/",
+    });
 
     // Prepare response data
     let responseData = { userId: user._id, role: user.role };
@@ -167,15 +185,10 @@ exports.refreshToken = async (req, res) => {
 
     const decoded = jwt.verify(refreshToken, process.env.JWT_REFRESH_SECRET);
     
-    // Fetch full user
+    // Fetch full user, not just refreshToken
     const user = await User.findOne({ _id: decoded.id });
     if (!user)
       return res.status(401).json({ message: "Invalid refresh token" });
-
-    // Basic integrity check: refresh token must match what we last issued
-    if (!user.refreshToken || user.refreshToken !== refreshToken) {
-      return res.status(401).json({ message: "Invalid refresh token" });
-    }
 
     // Prepare response
     let responseData = { userId: user._id, role: user.role };
@@ -184,12 +197,7 @@ exports.refreshToken = async (req, res) => {
       if (restaurant) responseData.restaurantId = restaurant._id;
     }
 
-    const newAccessToken = generateToken(user);
-
-    res.cookie("token", newAccessToken, {
-      ...cookieOptions(),
-    });
-
+    generateToken(user); // optional: generate a new access token
     res.status(200).json({ status: "success", data: responseData });
   } catch (err) {
     logger.error(err.message);
@@ -197,13 +205,20 @@ exports.refreshToken = async (req, res) => {
   }
 };
 exports.logout = (req, res) => {
-  res.clearCookie("token", cookieOptions());
-  res.clearCookie("refreshToken", cookieOptions());
-  return res.status(200).json({ status: "success" });
+  res.clearCookie("token", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+  });
+  res.clearCookie("refreshToken", {
+    httpOnly: true,
+    secure: process.env.NODE_ENV === "production",
+    sameSite: "none",
+  });
 };
 exports.forgotPassword = async (req, res) => {
   try {
-    const { email, phone } = req.body;
+    const { email } = req.body;
     const user = await User.findOne({ email });
     if (!user) {
       return res
@@ -211,17 +226,32 @@ exports.forgotPassword = async (req, res) => {
         .json({ message: "User with given email doesn't exist" });
     }
 
-    const { verificationCode, code } = await sendOTP(user.phone);
-    const otpExpiration = new Date(Date.now() + 10 * 60 * 1000);
-
-    user.resetPasswordToken = code;
-    user.resetPasswordExpires = otpExpiration;
+    const resetToken = crypto.randomBytes(20).toString("hex");
+    
+    user.resetPasswordToken = resetToken;
+    user.resetPasswordExpires = Date.now() + 10 * 60 * 1000; // 10 minutes
 
     await user.save();
-    res.status(200).json({
-      status: "success",
-      message: "OTP sent to your phone",
-    });
+
+    const clientUrl = process.env.CLIENT_URL || "http://localhost:3000";
+    const resetUrl = `${clientUrl}/reset-password/${resetToken}`; 
+
+    const message = `You are receiving this email because you (or someone else) has requested the reset of a password. Please make a PUT request to: \n\n ${resetUrl}`;
+
+    try {
+        await sendEmail({
+            email: user.email,
+            subject: 'Password Reset Token',
+            message
+        });
+
+        res.status(200).json({ status: "success", message: "Email sent" });
+    } catch (err) {
+        user.resetPasswordToken = undefined;
+        user.resetPasswordExpires = undefined;
+        await user.save({ validateBeforeSave: false });
+        res.status(500).json({ message: "Email could not be sent" });
+    }
   } catch (err) {
     logger.error(err.message);
     res.status(500).json({ message: "Server error" });
@@ -230,14 +260,17 @@ exports.forgotPassword = async (req, res) => {
 
 exports.resetPassword = async (req, res) => {
   try {
-    const { phone, code, newPassword } = req.body;
+    const { token } = req.params;
+    const { newPassword } = req.body;
+    
+    // Find user with token and check expiry
     const user = await User.findOne({
-      phone,
-      resetPasswordToken: code,
+      resetPasswordToken: token,
+      resetPasswordExpires: { $gt: Date.now() }
     });
 
-    if (!user || !user.resetPasswordExpires || user.resetPasswordExpires < new Date()) {
-      return res.status(400).json({ message: "Invalid or expired OTP" });
+    if (!user) {
+      return res.status(400).json({ message: "Invalid or expired token" });
     }
 
     user.password = newPassword;
