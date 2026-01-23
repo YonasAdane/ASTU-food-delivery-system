@@ -1,147 +1,94 @@
-"use client"
+"use client";
 
-import { useState, useEffect } from "react"
-import { ProfileSidebar } from "@/components/profile/profile-sidebar"
-import { ProfileCard } from "@/components/profile/profile-card"
-import { PersonalInformation } from "@/components/profile/personel-information"
-import { AddressesCard } from "@/components/profile/addresses-card"
-import { PaymentMethodsCard } from "@/components/profile/payment-methods-card"
-import { SecurityCard } from "@/components/profile/side-card"
-import { Button } from "@/components/ui/button"
-import { toast } from "sonner"
+import { useState, useEffect } from "react";
+import axios from "axios";
+import { ProfileCard } from "@/components/profile/profile-card";
+import { PersonalInformation } from "@/components/profile/personel-information";
+import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import { Loader2 } from "lucide-react";
+
 
 export default function ProfilePage() {
-  // #region agent log
-  useEffect(() => {
-    fetch('http://127.0.0.1:7244/ingest/86b2df56-d754-4baa-b70e-e72d02b31cab', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        location: 'profile/page.tsx:14',
-        message: 'ProfilePage component mounted',
-        data: { hydrated: typeof window !== 'undefined' },
-        timestamp: Date.now(),
-        sessionId: 'debug-session',
-        runId: 'run1',
-        hypothesisId: 'B'
-      })
-    }).catch(() => {});
-  }, []);
-  // #endregion
-
   const [profileData, setProfileData] = useState({
-    name: "John Doe",
-    firstName: "John",
-    lastName: "Doe",
-    email: "johndoe@astu.edu",
-    phone: "+251 91 234 5678",
-    avatarFile: null as File | null
-  })
+    firstName: "",
+    lastName: "",
+    email: "",
+    phone: "",
+    avatar: "",
+  });
 
-  const [hasChanges, setHasChanges] = useState(false)
-  const [isSaving, setIsSaving] = useState(false)
+  const [isLoading, setIsLoading] = useState(true);
+  const [isSaving, setIsSaving] = useState(false);
+  const [hasChanges, setHasChanges] = useState(false);
 
-  const handleNameChange = (name: string) => {
-    const parts = name.split(" ")
-    setProfileData(prev => ({
-      ...prev,
-      name,
-      firstName: parts[0] || prev.firstName,
-      lastName: parts.slice(1).join(" ") || prev.lastName
-    }))
-    setHasChanges(true)
-  }
-
-  const handleAvatarChange = (file: File) => {
-    setProfileData(prev => ({ ...prev, avatarFile: file }))
-    setHasChanges(true)
-  }
+  // 1. Fetch Real User Data
+  useEffect(() => {
+    const fetchUserData = async () => {
+      try {
+        const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/users/info`, { withCredentials: true });
+        const user = res.data.data;
+        setProfileData({
+          firstName: user.firstName || "",
+          lastName: user.lastName || "",
+          email: user.email || "",
+          phone: user.phone || "",
+          avatar: user.avatar || "",
+        });
+      } catch (error) {
+        toast.error("Failed to load profile");
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    fetchUserData();
+  }, []);
 
   const handleFieldChange = (field: string, value: string) => {
-    setProfileData(prev => ({ ...prev, [field]: value }))
-    setHasChanges(true)
-  }
+    setProfileData((prev) => ({ ...prev, [field]: value }));
+    setHasChanges(true);
+  };
 
   const handleSave = async () => {
-    setIsSaving(true)
+    setIsSaving(true);
     try {
-      // #region agent log
-      fetch('http://127.0.0.1:7244/ingest/86b2df56-d754-4baa-b70e-e72d02b31cab', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'profile/page.tsx:48',
-          message: 'handleSave started',
-          data: { profileData },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A'
-        })
-      }).catch(() => {});
-      // #endregion
- 
-      await new Promise(resolve => setTimeout(resolve, 1000))
-      
-      toast.success("Profile updated successfully!")
-      setHasChanges(false)
-    } catch (error) {
-   
-      fetch('http://127.0.0.1:7244/ingest/86b2df56-d754-4baa-b70e-e72d02b31cab', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          location: 'profile/page.tsx:66',
-          message: 'handleSave error caught',
-          data: { error: error instanceof Error ? error.message : String(error) },
-          timestamp: Date.now(),
-          sessionId: 'debug-session',
-          runId: 'run1',
-          hypothesisId: 'A'
-        })
-      }).catch(() => {});
-      // #endregion
-      toast.error("Failed to update profile. Please try again.")
-      console.error(error)
-    } finally {
-      setIsSaving(false)
-    }
-  }
+      // 2. Send Update to Backend
+      await axios.put(`${process.env.NEXT_PUBLIC_API_URL}/users/updateProfile`, {
+        firstName: profileData.firstName,
+        lastName: profileData.lastName,
+        phone: profileData.phone
+      }, { withCredentials: true });
 
-  const handleCancel = () => {
-    // Reset to original values
-    setProfileData({
-      name: "John Doe",
-      firstName: "John",
-      lastName: "Doe",
-      email: "johndoe@astu.edu",
-      phone: "+251 91 234 5678",
-      avatarFile: null
-    })
-    setHasChanges(false)
-    toast.info("Changes discarded")
-  }
+      toast.success("Profile updated successfully!");
+      setHasChanges(false);
+    } catch (error: any) {
+      toast.error(error.response?.data?.message || "Failed to update profile");
+    } finally {
+      setIsSaving(false);
+    }
+  };
+
+  if (isLoading) return <div className="h-screen flex items-center justify-center"><Loader2 className="animate-spin text-orange-500" /></div>;
 
   return (
-    <div className="min-h-screen bg-background">      
-      <main className="max-w-7xl mx-auto px-6 py-8">
+    <div className="min-h-screen bg-gray-50/50 dark:bg-slate-950 p-6">
+      <main className="max-w-4xl mx-auto space-y-8">
         <div className="mb-6">
-          <h1 className="text-3xl font-bold text-foreground">My Profile</h1>
-          <p className="text-muted-foreground mt-1">Manage your account settings and preferences</p>
+          <h1 className="text-3xl font-bold text-slate-900 dark:text-white">My Profile</h1>
+          <p className="text-slate-500 dark:text-slate-400">Manage your account settings</p>
         </div>
 
-        <div className="flex gap-6">
-   
-          <ProfileSidebar />
-
-    
-          <div className="flex-1 space-y-6">
+        <div className="flex flex-col lg:flex-row gap-8">
+          {/* Left: Avatar & Basic Info */}
+          <div className="lg:w-1/3 space-y-6">
             <ProfileCard
-              name={profileData.name}
+              name={`${profileData.firstName} ${profileData.lastName}`}
               email={profileData.email}
-              onNameChange={handleNameChange}
-              onAvatarChange={handleAvatarChange}
             />
+          </div>
+
+          {/* Right: Editable Fields */}
+          <div className="lg:w-2/3 space-y-6">
             <PersonalInformation
               firstName={profileData.firstName}
               lastName={profileData.lastName}
@@ -149,25 +96,13 @@ export default function ProfilePage() {
               phone={profileData.phone}
               onFieldChange={handleFieldChange}
             />
-            
-            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-              <AddressesCard />
-              <PaymentMethodsCard />
-            </div>
 
-            <SecurityCard />
-  
-            <div className="flex justify-end gap-4 pt-4">
-              <Button
-                variant="ghost"
-                className="text-foreground"
-                onClick={handleCancel}
-                disabled={!hasChanges || isSaving}
-              >
+            <div className="flex justify-end gap-4 pt-4 border-t dark:border-slate-800">
+              <Button variant="ghost" onClick={() => window.location.reload()} disabled={!hasChanges}>
                 Cancel
               </Button>
               <Button
-                className="bg-[#f48c25] hover:bg-[#16a34a] text-white px-8 disabled:opacity-50 disabled:cursor-not-allowed"
+                className="bg-orange-500 hover:bg-orange-600 text-white px-8"
                 onClick={handleSave}
                 disabled={!hasChanges || isSaving}
               >
@@ -178,5 +113,5 @@ export default function ProfilePage() {
         </div>
       </main>
     </div>
-  )
+  );
 }
