@@ -17,7 +17,7 @@ export default function CartPage() {
 
   const fetchCart = async () => {
     try {
-      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/getCart`, { withCredentials: true });
+      const res = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/customer/getCart`, { withCredentials: true });
       const cartData = res.data.data;
       setCart(cartData);
       setCount(cartData?.items?.length || 0); 
@@ -77,7 +77,7 @@ export default function CartPage() {
           <button 
             disabled={updatingId === 'clear'}
             onClick={() => handleAction('clear', 'clear', () => 
-              axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/deleteCart/${cart.restaurantId?._id || cart.restaurantId}`, { withCredentials: true })
+              axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/customer/deleteCart/${cart.restaurantId?._id || cart.restaurantId}`, { withCredentials: true })
             )}
             className="text-gray-400 hover:text-red-500 text-sm font-medium transition disabled:opacity-50"
           >
@@ -102,7 +102,7 @@ export default function CartPage() {
                   <button
                     disabled={updatingId === item._id || item.quantity <= 1}
                     onClick={() => handleAction('update', item._id, () => 
-                      axios.put(`${process.env.NEXT_PUBLIC_API_URL}/updateCart/${item._id}`, { quantity: item.quantity - 1 }, { withCredentials: true })
+                      axios.put(`${process.env.NEXT_PUBLIC_API_URL}/customer/updateCart/${item._id}`, { quantity: item.quantity - 1 }, { withCredentials: true })
                     )}
                     className="p-1 hover:text-orange-600 disabled:opacity-30 transition"
                   >
@@ -116,7 +116,7 @@ export default function CartPage() {
                   <button
                     disabled={updatingId === item._id}
                     onClick={() => handleAction('update', item._id, () => 
-                      axios.put(`${process.env.NEXT_PUBLIC_API_URL}/updateCart/${item._id}`, { quantity: item.quantity + 1 }, { withCredentials: true })
+                      axios.put(`${process.env.NEXT_PUBLIC_API_URL}/customer/updateCart/${item._id}`, { quantity: item.quantity + 1 }, { withCredentials: true })
                     )}
                     className="p-1 hover:text-orange-600 transition"
                   >
@@ -124,15 +124,15 @@ export default function CartPage() {
                   </button>
                 </div>
 
-                <button
+                {/* <button
                   disabled={updatingId === item._id}
                   onClick={() => handleAction('remove', item._id, () => 
-                    axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/removeFromCart/${item._id}`, { withCredentials: true })
+                    axios.delete(`${process.env.NEXT_PUBLIC_API_URL}/customer/removeFromCart/${item._id}`, { withCredentials: true })
                   )}
                   className="p-2 text-gray-400 hover:text-red-500 transition disabled:opacity-50"
                 >
                   <Trash2 size={18} />
-                </button>
+                </button> */}
               </div>
             </div>
           ))}
@@ -149,7 +149,7 @@ export default function CartPage() {
             <span className="text-lg font-bold text-orange-600">{cart.total} ETB</span>
           </div>
           
-          <button className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-orange-200 dark:shadow-none transition-all active:scale-[0.95]">
+          <button onClick={()=>console.log()} className="w-full bg-orange-500 hover:bg-orange-600 text-white py-4 rounded-xl font-bold shadow-lg shadow-orange-200 dark:shadow-none transition-all active:scale-[0.95]">
             Place Order
           </button>
         </div>
