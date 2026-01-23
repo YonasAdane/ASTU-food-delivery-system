@@ -31,12 +31,12 @@ exports.registerUserSchema = Joi.object({
 });
 
 exports.loginSchema = Joi.object({
-  email: Joi.string().email().optional(),
+  email: Joi.string().email().required(),
+  password: Joi.string().min(8).required(),
   phone: Joi.string()
     .pattern(/^\+?\d{10,13}$/)
     .optional(),
-  password: Joi.string().min(8).required(),
-}).or("email", "phone");
+});
 
 exports.otpSchema = Joi.object({
   phone: Joi.string()
@@ -47,15 +47,8 @@ exports.otpSchema = Joi.object({
 
 exports.forgotPasswordSchema = Joi.object({
   email: Joi.string().email().required(),
-  phone: Joi.string()
-    .pattern(/^\+?\d{10,13}$/)
-    .required(),
 });
 
 exports.resetPasswordSchema = Joi.object({
-  phone: Joi.string()
-    .pattern(/^\+?\d{10,13}$/)
-    .required(),
-  code: Joi.string().length(6).required(),
   newPassword: Joi.string().min(8).required(),
 });
