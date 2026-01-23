@@ -23,7 +23,7 @@ export default function RestaurantGrid() {
       setLoading(true);
       try {
         const res = await axios.get(
-          `http://localhost:5000/restaurants?${searchParams.toString()}`,
+          `${process.env.NEXT_PUBLIC_API_URL}/restaurants?${searchParams.toString()}`,
           { withCredentials: true }
         );
 

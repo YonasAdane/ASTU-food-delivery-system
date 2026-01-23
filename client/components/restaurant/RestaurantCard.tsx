@@ -1,5 +1,8 @@
+'use client'
+import { useRouter } from "next/navigation";
 type Props = {
   restaurant: {
+    _id:string
     name: string;
     image?: string;
     ratings: number;
@@ -12,8 +15,9 @@ type Props = {
 const DEFAULT_IMAGE = "https://images.unsplash.com/photo-1555396273-367ea4eb4db5?auto=format&fit=crop&w=800&q=80";
 
 export default function RestaurantCard({ restaurant }: Props) {
+  const router= useRouter()
   return (
-    <div className="group bg-white dark:bg-slate-800 rounded-xl border overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1">
+    <div onClick={()=>router.push(`/customer/restaurant/${restaurant._id}`)} className="group bg-white dark:bg-slate-800 rounded-xl border overflow-hidden shadow-sm transition-all duration-300 hover:shadow-xl hover:-translate-y-1 cursor-pointer">
       <div className="relative h-48 overflow-hidden">
         <img
           src={restaurant.image || DEFAULT_IMAGE}
