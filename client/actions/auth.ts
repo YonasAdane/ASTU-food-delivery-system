@@ -1,6 +1,7 @@
 "use server"
 
 import { getErrorMessage } from "@/lib/get-error-message"
+import { cookies } from "next/headers"
 import { z } from "zod"
 
 
@@ -84,4 +85,12 @@ export async function registerCustomer(
       message: getErrorMessage(error),
     }
   }
+}
+
+export async function clearUserCookie() {
+  const userCookies =await cookies();
+  userCookies.set("user", "", {
+    path: "/",
+    maxAge: 0,
+  });
 }

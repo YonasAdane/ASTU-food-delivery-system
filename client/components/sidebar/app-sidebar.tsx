@@ -20,7 +20,7 @@ import {
   IconProgressCheck,
   IconSettingsCode,
 } from "@tabler/icons-react";
-import { ChartNoAxesColumnIncreasing, HandPlatter, LayoutDashboard, Package, ShoppingBag, Users2Icon } from "lucide-react";
+import { Car, ChartNoAxesColumnIncreasing, HandHelping, HandPlatter, LayoutDashboard, Package, ShoppingBag, Users2Icon } from "lucide-react";
 import type { SidebarData } from "./types";
 import Image from "next/image";
 
@@ -56,6 +56,18 @@ const data: SidebarData = {
       title: "Restaurants",
       url: "/admin/restaurants",
       icon: HandPlatter,
+    },
+    {
+      id: "drivers",
+      title: "Drivers",
+      url: "/admin/drivers",
+      icon: Car,
+    },
+    {
+      id: "applications",
+      title: "Applications",
+      url: "/admin/applications",
+      icon: HandHelping,
     },
     {
       id: "reports",

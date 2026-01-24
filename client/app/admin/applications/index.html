@@ -1,0 +1,438 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>Restaurant Verification - ASTU Admin</title>
+  <!-- Google Fonts -->
+  <link href="https://fonts.googleapis.com" rel="preconnect" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;600;700&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Material Symbols -->
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <link
+    href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+    rel="stylesheet" />
+  <!-- Tailwind CSS -->
+  <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+  <!-- Theme Config -->
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "primary": "#f48c25",
+            "secondary": "#22c55e",
+            "danger": "#ef4444",
+            "background-light": "#f8f7f5",
+            "background-dark": "#221910",
+            "text-main": "#181411",
+            "text-muted": "#8a7560",
+            "border-color": "#e6e0db",
+          },
+          fontFamily: {
+            "display": ["Work Sans", "sans-serif"],
+            "body": ["Noto Sans", "sans-serif"],
+          },
+          borderRadius: { "DEFAULT": "0.25rem", "lg": "0.5rem", "xl": "0.75rem", "2xl": "1rem", "full": "9999px" },
+        },
+      },
+    }
+  </script>
+  <style>
+    .material-symbols-outlined {
+      font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+
+    .icon-filled {
+      font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+    }
+  </style>
+</head>
+
+<body class="bg-background-light dark:bg-background-dark text-text-main font-display antialiased overflow-hidden">
+  <div class="flex h-screen w-full">
+    <!-- Side Navigation -->
+    <aside
+      class="w-64 bg-white border-r border-border-color flex flex-col justify-between shrink-0 z-20 h-full hidden md:flex">
+      <div class="flex flex-col gap-4 p-4">
+        <div class="flex items-center gap-3 px-2">
+          <div class="bg-primary/10 flex items-center justify-center rounded-lg size-10">
+            <span class="material-symbols-outlined text-primary">lunch_dining</span>
+          </div>
+          <h1 class="text-text-main text-lg font-bold leading-normal">ASTU Admin</h1>
+        </div>
+        <div class="flex flex-col gap-2 mt-4">
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-background-light transition-colors group"
+            href="#">
+            <span class="material-symbols-outlined text-text-muted group-hover:text-text-main">dashboard</span>
+            <p class="text-text-muted group-hover:text-text-main text-sm font-medium">Dashboard</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-primary/10 text-primary" href="#">
+            <span class="material-symbols-outlined icon-filled">grading</span>
+            <p class="text-sm font-medium">Applications</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-background-light transition-colors group"
+            href="#">
+            <span class="material-symbols-outlined text-text-muted group-hover:text-text-main">storefront</span>
+            <p class="text-text-muted group-hover:text-text-main text-sm font-medium">Restaurants</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-background-light transition-colors group"
+            href="#">
+            <span class="material-symbols-outlined text-text-muted group-hover:text-text-main">payments</span>
+            <p class="text-text-muted group-hover:text-text-main text-sm font-medium">Finance</p>
+          </a>
+          <a class="flex items-center gap-3 px-3 py-2 rounded-lg hover:bg-background-light transition-colors group"
+            href="#">
+            <span class="material-symbols-outlined text-text-muted group-hover:text-text-main">settings</span>
+            <p class="text-text-muted group-hover:text-text-main text-sm font-medium">Settings</p>
+          </a>
+        </div>
+      </div>
+      <div class="p-4 border-t border-border-color">
+        <button
+          class="flex items-center gap-3 px-3 py-2 w-full rounded-lg hover:bg-red-50 text-red-600 transition-colors">
+          <span class="material-symbols-outlined">logout</span>
+          <p class="text-sm font-medium">Log Out</p>
+        </button>
+      </div>
+    </aside>
+    <!-- Main Content Wrapper -->
+    <main class="flex-1 flex flex-col h-full overflow-hidden relative">
+      <!-- Top Header -->
+      <header class="h-16 bg-white border-b border-border-color flex items-center justify-between px-6 shrink-0 z-10">
+        <!-- Mobile Menu Trigger (Visible on small screens) -->
+        <button class="md:hidden p-2 -ml-2 text-text-main">
+          <span class="material-symbols-outlined">menu</span>
+        </button>
+        <div class="flex items-center gap-4 flex-1 max-w-xl">
+          <label class="relative w-full flex items-center">
+            <span class="material-symbols-outlined absolute left-3 text-text-muted">search</span>
+            <input
+              class="w-full bg-background-light border-none rounded-lg py-2 pl-10 pr-4 text-sm focus:ring-2 focus:ring-primary/20 placeholder:text-text-muted text-text-main h-10"
+              placeholder="Search applications..." type="text" />
+          </label>
+        </div>
+        <div class="flex items-center gap-4 ml-4">
+          <button class="relative p-2 text-text-muted hover:text-primary transition-colors">
+            <span class="material-symbols-outlined">notifications</span>
+            <span class="absolute top-1.5 right-1.5 size-2 bg-red-500 rounded-full border border-white"></span>
+          </button>
+          <div class="h-8 w-px bg-border-color mx-2"></div>
+          <div class="flex items-center gap-3 cursor-pointer">
+            <div class="text-right hidden sm:block">
+              <p class="text-sm font-medium text-text-main">Admin User</p>
+              <p class="text-xs text-text-muted">Super Admin</p>
+            </div>
+            <div class="size-10 rounded-full bg-cover bg-center border border-border-color"
+              data-alt="Admin profile photo"
+              style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAW1YvPp4OC3qIcwzZRy-rRmnUeTdp0LsRHmGFj0Gf3VSX4KBPbsUob__06wq3gMm7sAZxDJhaM-KrbsUBroJbNnJUvpY9SCmdIq8as1MJc_XpeQna6_HvIE9NySw4MF473Un4-Ii--UiABRAFaVv-f3KqXs1d3I6MYGc26LX2WefEGGVnHkPkIVkyzsJ-4wWO6P2NhNbhCx9Lt_hlGwAihyRNGcbjrv0kv9o0Z0sgHRRWzzI7ch-gXw_W-TCcjSzFN_5zbZJU01zFh');">
+            </div>
+          </div>
+        </div>
+      </header>
+      <!-- Scrollable Content -->
+      <div class="flex-1 overflow-y-auto bg-background-light p-6">
+        <div class="max-w-[1200px] mx-auto h-full flex flex-col">
+          <!-- Page Heading & Filters -->
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6 shrink-0">
+            <div>
+              <h2 class="text-2xl font-bold text-text-main">Restaurant Verification</h2>
+              <p class="text-text-muted text-sm mt-1">Reviewing 12 pending applications</p>
+            </div>
+            <div class="flex bg-white rounded-lg p-1 shadow-sm border border-border-color w-fit">
+              <label class="cursor-pointer">
+                <input checked="" class="peer sr-only" name="status" type="radio" />
+                <div
+                  class="px-4 py-1.5 rounded-md text-sm font-medium text-text-muted peer-checked:bg-primary/10 peer-checked:text-primary transition-colors">
+                  Pending
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input class="peer sr-only" name="status" type="radio" />
+                <div
+                  class="px-4 py-1.5 rounded-md text-sm font-medium text-text-muted peer-checked:bg-secondary/10 peer-checked:text-secondary transition-colors">
+                  Approved
+                </div>
+              </label>
+              <label class="cursor-pointer">
+                <input class="peer sr-only" name="status" type="radio" />
+                <div
+                  class="px-4 py-1.5 rounded-md text-sm font-medium text-text-muted peer-checked:bg-danger/10 peer-checked:text-danger transition-colors">
+                  Rejected
+                </div>
+              </label>
+            </div>
+          </div>
+          <!-- Split View Layout -->
+          <div class="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0">
+            <!-- List Column -->
+            <div class="lg:col-span-4 flex flex-col gap-3 overflow-y-auto pr-1 pb-4 h-full">
+              <!-- Active Item -->
+              <div
+                class="bg-white p-4 rounded-xl shadow-md border-l-4 border-primary cursor-pointer transition-transform hover:scale-[1.01]">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="flex items-center gap-3">
+                    <div class="size-12 rounded-lg bg-cover bg-center bg-gray-100" data-alt="Spicy Bites Logo"
+                      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAc8aYjABst4OoSw86aHDOAU1gefwaUp6IvNFaocOaXtsHQe02mX-NIMhUlLqBBOhkMhRMx6vCEFF4Ok-CCmLzznLe2KEqTyiS52W1HmgSxKeGDhm18Mv2StaGHOcMIYNQoCSrV-X9wzwlLN06D4fxHeK-vi8nIbTy54McQWtixDZjgVF5pgqUZh1tmlbdYNcTKKR8KeDipvq17E8Jcm6k2FcSFnY4mbHQZwZV17xBCYG3zdUhT9hJKIo-C2B-kXLtCH6VUjeQULEqY');">
+                    </div>
+                    <div>
+                      <h3 class="font-semibold text-text-main leading-tight">Spicy Bites</h3>
+                      <p class="text-xs text-text-muted mt-0.5">ID: #REQ-2491</p>
+                    </div>
+                  </div>
+                  <span
+                    class="px-2 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-bold uppercase tracking-wider rounded-full border border-yellow-200">Pending</span>
+                </div>
+                <div class="flex items-center justify-between mt-3 text-xs text-text-muted">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span>Oct 24, 2023</span>
+                  </div>
+                  <div class="flex items-center gap-1 text-primary font-medium">
+                    <span>Review</span>
+                    <span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Inactive Item 1 -->
+              <div
+                class="bg-white p-4 rounded-xl shadow-sm border border-transparent hover:border-primary/30 cursor-pointer transition-colors">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="flex items-center gap-3">
+                    <div class="size-12 rounded-lg bg-cover bg-center bg-gray-100" data-alt="Green Bowl Logo"
+                      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAXSHnrXZsDNTzvlaDNs66K3hBpPCAFfl8mm9uejDl2-HQNjFLju-J5pNPvRTTaLJnCiHpV3ZYA-s4sInGMMKjTN9VAlI1Up6sLcF0Nu0l-__0j1r7wYN7YBsg8JidjNm5r-ngBYXQbC00QQnglJgNqY1YOgmQixXbYGFyc0okQLUUkx5qYhydC6RFs0LYrSSHlwCpSr9zKxbNyAgJVP0rQGnJuyuK9Eoj77I7tKj8nzuGUB1kwu-m26LGhiCrNK2eZHu-rGo_ZsJh6');">
+                    </div>
+                    <div>
+                      <h3 class="font-medium text-text-main leading-tight">The Green Bowl</h3>
+                      <p class="text-xs text-text-muted mt-0.5">ID: #REQ-2488</p>
+                    </div>
+                  </div>
+                  <span
+                    class="px-2 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-bold uppercase tracking-wider rounded-full border border-yellow-200">Pending</span>
+                </div>
+                <div class="flex items-center justify-between mt-3 text-xs text-text-muted">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span>Oct 23, 2023</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Inactive Item 2 -->
+              <div
+                class="bg-white p-4 rounded-xl shadow-sm border border-transparent hover:border-primary/30 cursor-pointer transition-colors">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="flex items-center gap-3">
+                    <div class="size-12 rounded-lg bg-cover bg-center bg-gray-100" data-alt="Pizza Heaven Logo"
+                      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuCj5Vb04Cl0PWXcLUtnhIbJzdi5psFJ64prtR3gBLZOmbCALc1mKweijGbsyDxK5MJOBHV9Oq4YxNU5vQAtn_RnPj0-KXXX5s4KM-doM3X2Sh9g9mAdyRMDyJ7Oz7k5wkXCZ8DFO5Gx-2ScTil2vPzxvf1X3zvNBaBjbpwfkc4bPGgshDUNrvwsyzKGTDMCdyabZiHbaANyy-dll8IwK_5-t5UBbuQ6B4dDcsCUqk9qI_ZMlbxymKtAxQpNYQOLScUKSKwvY7eaSnYQ');">
+                    </div>
+                    <div>
+                      <h3 class="font-medium text-text-main leading-tight">Pizza Heaven</h3>
+                      <p class="text-xs text-text-muted mt-0.5">ID: #REQ-2485</p>
+                    </div>
+                  </div>
+                  <span
+                    class="px-2 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-bold uppercase tracking-wider rounded-full border border-yellow-200">Pending</span>
+                </div>
+                <div class="flex items-center justify-between mt-3 text-xs text-text-muted">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span>Oct 22, 2023</span>
+                  </div>
+                </div>
+              </div>
+              <!-- Inactive Item 3 -->
+              <div
+                class="bg-white p-4 rounded-xl shadow-sm border border-transparent hover:border-primary/30 cursor-pointer transition-colors">
+                <div class="flex justify-between items-start mb-2">
+                  <div class="flex items-center gap-3">
+                    <div class="size-12 rounded-lg bg-cover bg-center bg-gray-100" data-alt="Sushi Master Logo"
+                      style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDXW6mVFF9TSHKCQCdH0ymyf8wZMVR9GCW0d1qMXXVk1XLHvKNkeXEbtkyi399oXDVMHqsV-COFEhPiO_l6lefhpS3HDT1s_PDj0mtPUDTCl84ISHO-C9JefaFEc_sQEttGg7dJbpR19HfwE4H0sFvIxeXA-YXFTyuXqJBPeAMIZuULONmiz3eaZHP_OKYYipnS1HCbGIKTW61NKeRGMUODxjyvdoNK-AAdAE87U9Vr_V1E1fKKlMaYKLrx4SwAJ4mH-QonJNx9XYvp');">
+                    </div>
+                    <div>
+                      <h3 class="font-medium text-text-main leading-tight">Sushi Master</h3>
+                      <p class="text-xs text-text-muted mt-0.5">ID: #REQ-2480</p>
+                    </div>
+                  </div>
+                  <span
+                    class="px-2 py-1 bg-yellow-50 text-yellow-700 text-[10px] font-bold uppercase tracking-wider rounded-full border border-yellow-200">Pending</span>
+                </div>
+                <div class="flex items-center justify-between mt-3 text-xs text-text-muted">
+                  <div class="flex items-center gap-1">
+                    <span class="material-symbols-outlined text-[16px]">calendar_today</span>
+                    <span>Oct 21, 2023</span>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <!-- Details Panel (Main Focus) -->
+            <div class="lg:col-span-8 h-full flex flex-col">
+              <div
+                class="bg-white rounded-2xl shadow-sm border border-border-color overflow-hidden flex flex-col h-full">
+                <!-- Hero Image -->
+                <div class="h-32 w-full bg-cover bg-center relative group" data-alt="Restaurant interior ambiance"
+                  style="background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDn9TFWT-pHjBe7G2Kn2DFjkf_-mTh3MdaBrfm30H3MbWJ6ZbHwguLSjsYCUpxP64s9Vh9T_cByFUQiJ3OaSBlbiUt_-m9MP57UOW6-y_mLrdNVi57nfMFQIZEs4vkub3PNgcIsFtKW4lDUKkoaB3wxSTBuAXlH75eB9hlMt-u0RmipxSHvTpdNvu-GyNLi5IPhN6AWHBkhNlgEjKor6CDejnFX4olIPzNLDVJlqXPwr2AIdi3tmELh6YQdhg9_ZuVUwL1RnWMWqLag');">
+                  <div class="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
+                </div>
+                <!-- Content -->
+                <div class="flex-1 overflow-y-auto relative">
+                  <!-- Header Info -->
+                  <div class="px-8 pb-6 border-b border-border-color">
+                    <div class="flex justify-between items-end -mt-10 mb-4 relative z-10">
+                      <div class="size-20 rounded-xl border-4 border-white bg-white shadow-md overflow-hidden">
+                        <img class="w-full h-full object-cover" data-alt="Spicy Bites Logo large"
+                          src="https://lh3.googleusercontent.com/aida-public/AB6AXuAm47PSp0aSwt3G_FA7FqDJoHSnnz7hnRDX2so9BVuk2YRQneyYmo0_GkFbpICj4mbzC9cppKB5Ml-ZfzTjvag9nvqnWXAA4-WoBX1mESPri65b3HR15Ci8WACG3hTZjgqdX0Xfjyr3aRQHaOdIZv4gxDkrqLIQnCGWEVrcVrJZie2jvyOSAveLWb5Kgq4d4YP9FGlARvin2quXcIk8xh447ufo40lv0irF7SE9zYEEKtHv5IYz6JvdFlNHagEDi_mXk2NZPnIEC-UW" />
+                      </div>
+                      <div class="flex gap-2 mb-1">
+                        <a class="flex items-center justify-center size-8 rounded-full bg-background-light text-text-muted hover:bg-primary/10 hover:text-primary transition-colors"
+                          href="#">
+                          <span class="material-symbols-outlined text-[18px]">language</span>
+                        </a>
+                        <a class="flex items-center justify-center size-8 rounded-full bg-background-light text-text-muted hover:bg-primary/10 hover:text-primary transition-colors"
+                          href="#">
+                          <span class="material-symbols-outlined text-[18px]">email</span>
+                        </a>
+                        <a class="flex items-center justify-center size-8 rounded-full bg-background-light text-text-muted hover:bg-primary/10 hover:text-primary transition-colors"
+                          href="#">
+                          <span class="material-symbols-outlined text-[18px]">call</span>
+                        </a>
+                      </div>
+                    </div>
+                    <div>
+                      <h1 class="text-2xl font-bold text-text-main">Spicy Bites</h1>
+                      <p class="text-text-muted mt-1">Authentic Asian fusion cuisine specializing in spicy noodles and
+                        dumplings. Located near the North Campus gate.</p>
+                    </div>
+                  </div>
+                  <!-- Details Grid -->
+                  <div class="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+                    <!-- Section: Restaurant Details -->
+                    <div class="space-y-4">
+                      <h3 class="text-sm font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[18px]">store</span>
+                        Restaurant Details
+                      </h3>
+                      <div class="space-y-3">
+                        <div class="flex flex-col">
+                          <span class="text-xs text-text-muted">Owner Name</span>
+                          <span class="text-sm font-medium text-text-main">Sarah Jenkins</span>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="text-xs text-text-muted">Cuisine Type</span>
+                          <span class="text-sm font-medium text-text-main">Asian Fusion, Spicy</span>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="text-xs text-text-muted">Opening Hours</span>
+                          <span class="text-sm font-medium text-text-main">10:00 AM - 10:00 PM</span>
+                        </div>
+                        <div class="flex flex-col">
+                          <span class="text-xs text-text-muted">Address</span>
+                          <span class="text-sm font-medium text-text-main">124 University Ave, North Gate, Block
+                            B</span>
+                        </div>
+                      </div>
+                    </div>
+                    <!-- Section: Documents -->
+                    <div class="space-y-4">
+                      <h3 class="text-sm font-bold text-text-main uppercase tracking-wider flex items-center gap-2">
+                        <span class="material-symbols-outlined text-primary text-[18px]">folder_open</span>
+                        Verification Documents
+                      </h3>
+                      <div class="space-y-3">
+                        <div
+                          class="flex items-center p-3 rounded-lg border border-border-color bg-background-light hover:bg-white transition-colors cursor-pointer group">
+                          <div
+                            class="bg-red-100 text-red-600 rounded p-1.5 mr-3 group-hover:bg-red-200 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-text-main truncate">Business_License_2024.pdf</p>
+                            <p class="text-xs text-text-muted">2.4 MB • Uploaded Oct 24</p>
+                          </div>
+                          <span
+                            class="material-symbols-outlined text-text-muted group-hover:text-primary">visibility</span>
+                        </div>
+                        <div
+                          class="flex items-center p-3 rounded-lg border border-border-color bg-background-light hover:bg-white transition-colors cursor-pointer group">
+                          <div
+                            class="bg-blue-100 text-blue-600 rounded p-1.5 mr-3 group-hover:bg-blue-200 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">image</span>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-text-main truncate">Food_Safety_Cert.jpg</p>
+                            <p class="text-xs text-text-muted">1.8 MB • Uploaded Oct 24</p>
+                          </div>
+                          <span
+                            class="material-symbols-outlined text-text-muted group-hover:text-primary">visibility</span>
+                        </div>
+                        <div
+                          class="flex items-center p-3 rounded-lg border border-border-color bg-background-light hover:bg-white transition-colors cursor-pointer group">
+                          <div
+                            class="bg-red-100 text-red-600 rounded p-1.5 mr-3 group-hover:bg-red-200 transition-colors">
+                            <span class="material-symbols-outlined text-[20px]">picture_as_pdf</span>
+                          </div>
+                          <div class="flex-1 min-w-0">
+                            <p class="text-sm font-medium text-text-main truncate">Menu_Pricing_List.pdf</p>
+                            <p class="text-xs text-text-muted">5.1 MB • Uploaded Oct 24</p>
+                          </div>
+                          <span
+                            class="material-symbols-outlined text-text-muted group-hover:text-primary">visibility</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                  <!-- Map / Location Placeholder -->
+                  <div class="px-8 pb-8">
+                    <h3 class="text-sm font-bold text-text-main uppercase tracking-wider flex items-center gap-2 mb-4">
+                      <span class="material-symbols-outlined text-primary text-[18px]">map</span>
+                      Location
+                    </h3>
+                    <div class="w-full h-40 bg-gray-100 rounded-xl overflow-hidden relative">
+                      <div class="absolute inset-0 bg-cover bg-center opacity-70"
+                        data-alt="Map view showing location pin" data-location="University Campus Map"
+                        style="background-image: url('https://placeholder.pics/svg/300');"></div>
+                      <div class="absolute inset-0 flex items-center justify-center">
+                        <div class="bg-primary text-white p-2 rounded-full shadow-lg">
+                          <span class="material-symbols-outlined">location_on</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <!-- Action Footer -->
+                <div class="p-4 border-t border-border-color bg-gray-50 flex justify-between items-center shrink-0">
+                  <button
+                    class="text-text-muted hover:text-text-main text-sm font-medium px-4 py-2 flex items-center gap-2 transition-colors">
+                    <span class="material-symbols-outlined text-[18px]">flag</span>
+                    Report Issue
+                  </button>
+                  <div class="flex gap-3">
+                    <button
+                      class="px-5 py-2.5 rounded-lg border border-danger/30 text-danger hover:bg-danger/5 font-medium transition-colors flex items-center gap-2">
+                      <span class="material-symbols-outlined text-[20px]">close</span>
+                      Reject
+                    </button>
+                    <button
+                      class="px-5 py-2.5 rounded-lg bg-primary text-white hover:bg-orange-600 font-medium shadow-md shadow-orange-200 transition-colors flex items-center gap-2">
+                      <span class="material-symbols-outlined text-[20px]">check</span>
+                      Approve Restaurant
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </main>
+  </div>
+</body>
+
+</html>

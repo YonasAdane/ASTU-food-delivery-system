@@ -30,6 +30,7 @@ import {
   Settings,
   User,
 } from "lucide-react";
+import LogoutAlert from "../common/logoutAlert";
 
 export function NavFooter({
   user,
@@ -58,6 +59,7 @@ export function NavFooter({
                     <User size={16} className="opacity-80" aria-hidden="true" />
                     Profile
                   </DropdownMenuItem>
+                    <LogoutAlert />
                   <DropdownMenuItem>
                     <Settings
                       size={16}
