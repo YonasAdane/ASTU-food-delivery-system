@@ -9,6 +9,7 @@ import { toast } from "sonner";
 import { Loader2 } from "lucide-react";
 
 
+
 export default function ProfilePage() {
   const [profileData, setProfileData] = useState({
     firstName: "",
@@ -16,6 +17,7 @@ export default function ProfilePage() {
     email: "",
     phone: "",
     avatar: "",
+    createdAt: "",
   });
 
   const [isLoading, setIsLoading] = useState(true);
@@ -34,6 +36,7 @@ export default function ProfilePage() {
           email: user.email || "",
           phone: user.phone || "",
           avatar: user.avatar || "",
+          createdAt:user.createdAt ? new Date(user.createdAt).toLocaleDateString() : "",
         });
       } catch (error) {
         toast.error("Failed to load profile");
@@ -80,10 +83,12 @@ export default function ProfilePage() {
 
         <div className="flex flex-col lg:flex-row gap-8">
           {/* Left: Avatar & Basic Info */}
+
           <div className="lg:w-1/3 space-y-6">
             <ProfileCard
               name={`${profileData.firstName} ${profileData.lastName}`}
               email={profileData.email}
+              memberSince={profileData.createdAt}
             />
           </div>
 

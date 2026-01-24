@@ -1,5 +1,20 @@
 import FloatingCart from "@/components/restaurant/FloatingCart";
 import Header from "@/components/restaurant/Header";
+import { Metadata } from "next";
+
+export const metadata: Metadata = {
+  title: "ASTU Food Delivery - Customer Portal",
+  description:
+    "Order meals from campus cafeterias, track deliveries, and enjoy a seamless dining experience at ASTU.",
+  keywords: ["ASTU", "Food Delivery", "Campus Cafeteria", "Orders", "Student Meals"],
+  authors: [{ name: "ASTU Eats" }],
+  openGraph: {
+    title: "ASTU Food Delivery - Customer Portal",
+    description:
+      "Order meals from campus cafeterias, track deliveries, and enjoy a seamless dining experience at ASTU.",
+    type: "website",
+  },
+};
 
 export default function CustomerLayout({ children }: { children: React.ReactNode }) {
   return (
