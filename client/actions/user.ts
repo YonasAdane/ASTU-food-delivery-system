@@ -2,7 +2,7 @@
 
 import { apiClient } from "@/lib/api-client";
 import { getErrorMessage } from "@/lib/get-error-message";
-import { PaginatedApi, PaginatedApiResponse } from "@/types/api";
+import { PaginatedApi } from "@/types/api";
 import { CreateUserFormValues, User } from "@/types/user";
 import { refresh, revalidateTag } from "next/cache";
 

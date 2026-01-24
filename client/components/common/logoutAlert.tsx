@@ -1,4 +1,5 @@
 // LogoutAlert component
+import { clearUserCookie } from "@/actions/auth";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -22,7 +23,8 @@ const LogoutAlert: React.FC = () => {
   const [isOpen, setIsOpen] = useState(false); 
 
   const handleLogout = async () => {
-    await logout(); 
+    logout();
+    await clearUserCookie(); 
     setIsOpen(false);
     router.push("/");
   };

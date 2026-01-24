@@ -1,0 +1,730 @@
+<!DOCTYPE html>
+
+<html class="light" lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+    <title>Drivers Management - ASTU Eats</title>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Work+Sans:wght@400;500;700;900&amp;family=Noto+Sans:wght@400;500;700&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap"
+      rel="stylesheet"
+    />
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <script id="tailwind-config">
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            colors: {
+              primary: "#f48c25",
+              "background-light": "#f8f7f5",
+              "background-dark": "#221910",
+            },
+            fontFamily: {
+              display: ["Work Sans", "sans-serif"],
+              body: ["Noto Sans", "sans-serif"],
+            },
+            borderRadius: {
+              DEFAULT: "0.25rem",
+              lg: "0.5rem",
+              xl: "0.75rem",
+              full: "9999px",
+            },
+          },
+        },
+      };
+    </script>
+  </head>
+  <body
+    class="bg-background-light dark:bg-background-dark text-[#181411] font-display"
+  >
+    <div class="flex h-screen w-full overflow-hidden">
+      <!-- Side Navigation -->
+      
+      <!-- Main Content -->
+      <main
+        class="flex-1 flex flex-col h-full overflow-hidden bg-background-light dark:bg-background-dark relative"
+      >
+        <!-- Scrollable Area -->
+        <div class="flex-1 overflow-y-auto">
+          <div
+            class="layout-container flex flex-col max-w-[1200px] mx-auto px-6 py-8 gap-8"
+          >
+            <!-- Header Section -->
+            <div
+              class="flex flex-col md:flex-row md:items-center justify-between gap-4"
+            >
+              <div class="flex flex-col gap-1">
+                <h1
+                  class="text-[#181411] text-3xl md:text-4xl font-black leading-tight tracking-[-0.033em]"
+                >
+                  Drivers Management
+                </h1>
+                <p class="text-[#8a7560] text-base font-normal">
+                  Manage your fleet, view status, and track performance.
+                </p>
+              </div>
+              <!-- <button
+                class="flex items-center justify-center rounded-lg h-12 px-6 bg-primary hover:bg-[#d67315] text-white gap-2 text-base font-bold transition-colors shadow-lg shadow-primary/20"
+              >
+                <span class="material-symbols-outlined text-white">add</span>
+                <span>Add New Driver</span>
+              </button> -->
+            </div>
+            <!-- Stats Overview -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div
+                class="flex flex-col gap-2 rounded-xl p-5 bg-white shadow-sm border border-[#e6e0db]"
+              >
+                <div class="flex justify-between items-start">
+                  <p class="text-[#8a7560] text-sm font-medium">Total Fleet</p>
+                  <span
+                    class="material-symbols-outlined text-primary bg-primary/10 p-1 rounded-md text-[20px]"
+                    >groups</span
+                  >
+                </div>
+                <p class="text-[#181411] text-3xl font-bold leading-tight">
+                  12
+                </p>
+              </div>
+              <div
+                class="flex flex-col gap-2 rounded-xl p-5 bg-white shadow-sm border border-[#e6e0db]"
+              >
+                <div class="flex justify-between items-start">
+                  <p class="text-[#8a7560] text-sm font-medium">Active Now</p>
+                  <span
+                    class="material-symbols-outlined text-[#07880e] bg-[#07880e]/10 p-1 rounded-md text-[20px]"
+                    >check_circle</span
+                  >
+                </div>
+                <div class="flex items-end gap-2">
+                  <p class="text-[#181411] text-3xl font-bold leading-tight">
+                    8
+                  </p>
+                  <p class="text-[#07880e] text-sm font-medium mb-1">
+                    +2 vs yesterday
+                  </p>
+                </div>
+              </div>
+              <div
+                class="flex flex-col gap-2 rounded-xl p-5 bg-white shadow-sm border border-[#e6e0db]"
+              >
+                <div class="flex justify-between items-start">
+                  <p class="text-[#8a7560] text-sm font-medium">
+                    Avg. Delivery Time
+                  </p>
+                  <span
+                    class="material-symbols-outlined text-primary bg-primary/10 p-1 rounded-md text-[20px]"
+                    >timer</span
+                  >
+                </div>
+                <div class="flex items-end gap-2">
+                  <p class="text-[#181411] text-3xl font-bold leading-tight">
+                    18
+                    <span class="text-lg font-normal text-[#8a7560]">min</span>
+                  </p>
+                  <p class="text-[#07880e] text-sm font-medium mb-1">-2m</p>
+                </div>
+              </div>
+              <div
+                class="flex flex-col gap-2 rounded-xl p-5 bg-white shadow-sm border border-[#e6e0db]"
+              >
+                <div class="flex justify-between items-start">
+                  <p class="text-[#8a7560] text-sm font-medium">Avg. Rating</p>
+                  <span
+                    class="material-symbols-outlined text-primary bg-primary/10 p-1 rounded-md text-[20px]"
+                    >star</span
+                  >
+                </div>
+                <div class="flex items-end gap-2">
+                  <p class="text-[#181411] text-3xl font-bold leading-tight">
+                    4.8
+                  </p>
+                  <p class="text-[#07880e] text-sm font-medium mb-1">+0.1</p>
+                </div>
+              </div>
+            </div>
+            <!-- Filter & Search Toolbar -->
+            <div
+              class="flex flex-col md:flex-row gap-4 bg-white p-4 rounded-xl shadow-sm border border-[#e6e0db]"
+            >
+              <!-- Search -->
+              <div class="flex-1 relative">
+                <span
+                  class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-[#8a7560]"
+                  >search</span
+                >
+                <input
+                  class="w-full h-11 pl-10 pr-4 rounded-lg bg-[#f8f7f5] border-none text-[#181411] placeholder:text-[#8a7560] focus:ring-2 focus:ring-primary/50 text-base"
+                  placeholder="Search by name, ID, or vehicle..."
+                  type="text"
+                />
+              </div>
+              <!-- Filters -->
+              <div class="flex gap-3 overflow-x-auto pb-2 md:pb-0">
+                <select
+                  class="h-11 px-4 rounded-lg bg-[#f8f7f5] border-none text-[#181411] focus:ring-2 focus:ring-primary/50 cursor-pointer min-w-[140px]"
+                >
+                  <option>All Statuses</option>
+                  <option>Available</option>
+                  <option>Busy</option>
+                  <option>Offline</option>
+                </select>
+                <select
+                  class="h-11 px-4 rounded-lg bg-[#f8f7f5] border-none text-[#181411] focus:ring-2 focus:ring-primary/50 cursor-pointer min-w-[140px]"
+                >
+                  <option>Sort by: Rating</option>
+                  <option>Sort by: Newest</option>
+                  <option>Sort by: Deliveries</option>
+                </select>
+                <button
+                  class="h-11 w-11 flex items-center justify-center rounded-lg bg-[#f8f7f5] text-[#181411] hover:bg-[#eae7e4]"
+                >
+                  <span class="material-symbols-outlined">grid_view</span>
+                </button>
+                <button
+                  class="h-11 w-11 flex items-center justify-center rounded-lg bg-white text-[#8a7560] hover:bg-[#eae7e4]"
+                >
+                  <span class="material-symbols-outlined">view_list</span>
+                </button>
+              </div>
+            </div>
+            <!-- Drivers Grid -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+              <!-- Driver Card 1 (Active) -->
+              <div
+                class="group flex flex-col bg-white rounded-xl shadow-sm border border-[#e6e0db] hover:shadow-md transition-shadow overflow-hidden"
+              >
+                <div class="p-5 flex flex-col gap-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                      <div class="relative">
+                        <div
+                          class="bg-center bg-cover size-14 rounded-full border-2 border-white shadow-sm"
+                          data-alt="Portrait of a smiling young male driver"
+                          style="
+                            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDB6vtVjD0NiFdk7nHKau-vwS9TBwuo858mhrTfe27NWLtUNbIGOKyW-Cz9i4EXuWceXczSowHlcSu150XRsUxOGSTRkc58dptI9ZhxdAlrQG0WqQYAd6jnA4KN7f3ZNZRWtgvse2S2SjEauST4leurIb7UyNqzqlXCpqhxIPGfROVK29Sv5Bsh4nbUqFtxG5IFcC7AIU02Fhtd78TT6Hal6xwfk7EprzkSw1MxOLdUaIDfUYR1X6ooyReY5b6dIP3rQLUjp4A7FcSV');
+                          "
+                        ></div>
+                        <div
+                          class="absolute bottom-0 right-0 size-3.5 bg-[#07880e] rounded-full border-2 border-white"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-[#181411] text-lg font-bold">
+                          Alex Johnson
+                        </h3>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                          <span
+                            class="bg-[#f5f2f0] text-[#8a7560] text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide"
+                            >Student</span
+                          >
+                          <span class="text-[#8a7560] text-xs">#D-402</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-[#07880e]/10 px-2.5 py-1 text-xs font-semibold text-[#07880e]"
+                    >
+                      Available
+                    </span>
+                  </div>
+                  <div
+                    class="grid grid-cols-3 divide-x divide-[#f5f2f0] border-t border-b border-[#f5f2f0] py-3"
+                  >
+                    <div class="flex flex-col items-center px-2">
+                      <div class="flex items-center gap-1 text-[#f48c25]">
+                        <span class="text-sm font-bold">4.9</span>
+                        <span
+                          class="material-symbols-outlined text-[14px] fill-1"
+                          >star</span
+                        >
+                      </div>
+                      <span class="text-[11px] text-[#8a7560]">Rating</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]"
+                        >1,240</span
+                      >
+                      <span class="text-[11px] text-[#8a7560]">Trips</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">98%</span>
+                      <span class="text-[11px] text-[#8a7560]">On-Time</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-[#8a7560]">
+                      <span class="material-symbols-outlined text-[20px]"
+                        >electric_scooter</span
+                      >
+                      <span class="text-sm">E-Scooter</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        aria-label="Message"
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >chat_bubble</span
+                        >
+                      </button>
+                      <button
+                        aria-label="View Profile"
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >person</span
+                        >
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Driver Card 2 (Busy) -->
+              <div
+                class="group flex flex-col bg-white rounded-xl shadow-sm border border-[#e6e0db] hover:shadow-md transition-shadow overflow-hidden"
+              >
+                <div class="p-5 flex flex-col gap-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                      <div class="relative">
+                        <div
+                          class="bg-center bg-cover size-14 rounded-full border-2 border-white shadow-sm"
+                          data-alt="Portrait of a female driver"
+                          style="
+                            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDdMoBm8Bhf1XXbNMogOtLtnHU2yn0_NNfqH_D9II3cyu6HBUhROMrhp23DpZucQbakmFYX6hmAbZ4aYk9D3YMB4bsEEzdGkDohIgRC7t6VNJj_IM_l8KNL3joFoyunYImjmxWfk_DfFr6Uv-xnkvdp0w-EmCScd7DznMz9OacYD0wfR2_qVqOKn1dBj6DLYPP7jMTrIejUhfttf0M25gOdVLAfYn7FzmZpoBSwouf8Y4gf-30Ev7QzsO_o37UW9WyAoA-GwYjmfCLW');
+                          "
+                        ></div>
+                        <div
+                          class="absolute bottom-0 right-0 size-3.5 bg-primary rounded-full border-2 border-white"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-[#181411] text-lg font-bold">
+                          Sarah Chen
+                        </h3>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                          <span
+                            class="bg-[#f5f2f0] text-[#8a7560] text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide"
+                            >Full-Time</span
+                          >
+                          <span class="text-[#8a7560] text-xs">#D-405</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary"
+                    >
+                      Delivering
+                    </span>
+                  </div>
+                  <div
+                    class="grid grid-cols-3 divide-x divide-[#f5f2f0] border-t border-b border-[#f5f2f0] py-3"
+                  >
+                    <div class="flex flex-col items-center px-2">
+                      <div class="flex items-center gap-1 text-[#f48c25]">
+                        <span class="text-sm font-bold">4.7</span>
+                        <span
+                          class="material-symbols-outlined text-[14px] fill-1"
+                          >star</span
+                        >
+                      </div>
+                      <span class="text-[11px] text-[#8a7560]">Rating</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">856</span>
+                      <span class="text-[11px] text-[#8a7560]">Trips</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">95%</span>
+                      <span class="text-[11px] text-[#8a7560]">On-Time</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-[#8a7560]">
+                      <span class="material-symbols-outlined text-[20px]"
+                        >pedal_bike</span
+                      >
+                      <span class="text-sm">Bike</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >chat_bubble</span
+                        >
+                      </button>
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >person</span
+                        >
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Driver Card 3 (Offline) -->
+              <div
+                class="group flex flex-col bg-white rounded-xl shadow-sm border border-[#e6e0db] hover:shadow-md transition-shadow overflow-hidden opacity-90"
+              >
+                <div class="p-5 flex flex-col gap-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                      <div class="relative grayscale">
+                        <div
+                          class="bg-center bg-cover size-14 rounded-full border-2 border-white shadow-sm"
+                          data-alt="Portrait of a male driver looking serious"
+                          style="
+                            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuDwRMCJtuafveDfPiFqcZttKww3IOLaKH32aFHAEpZ99AB767DjTcRlS7s9y6E_YhDh2skguL1DTlJv4nkSFU_uXDrOieMu30EYNbfFJDJIvKPTqp19Vp3CP5nVyar5PngY06P1sbFgaNK473R65OSp8sEYDCBNuS-xoJKAijHgRQHzAGwvowE9EKhD6wKt6H9cqOxM3-4nCs29stiiwMTSnkWx_g8arfV6Dx0xKbpQH-WKDIx6-7iDBR58fh0H_Xdbu2yprAug5pXa');
+                          "
+                        ></div>
+                        <div
+                          class="absolute bottom-0 right-0 size-3.5 bg-gray-400 rounded-full border-2 border-white"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-[#181411] text-lg font-bold">
+                          Mike Ross
+                        </h3>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                          <span
+                            class="bg-[#f5f2f0] text-[#8a7560] text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide"
+                            >Student</span
+                          >
+                          <span class="text-[#8a7560] text-xs">#D-411</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-gray-100 px-2.5 py-1 text-xs font-semibold text-gray-500"
+                    >
+                      Offline
+                    </span>
+                  </div>
+                  <div
+                    class="grid grid-cols-3 divide-x divide-[#f5f2f0] border-t border-b border-[#f5f2f0] py-3"
+                  >
+                    <div class="flex flex-col items-center px-2">
+                      <div class="flex items-center gap-1 text-[#f48c25]">
+                        <span class="text-sm font-bold">4.5</span>
+                        <span
+                          class="material-symbols-outlined text-[14px] fill-1"
+                          >star</span
+                        >
+                      </div>
+                      <span class="text-[11px] text-[#8a7560]">Rating</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">340</span>
+                      <span class="text-[11px] text-[#8a7560]">Trips</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">92%</span>
+                      <span class="text-[11px] text-[#8a7560]">On-Time</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-[#8a7560]">
+                      <span class="material-symbols-outlined text-[20px]"
+                        >directions_car</span
+                      >
+                      <span class="text-sm">Car</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >chat_bubble</span
+                        >
+                      </button>
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >person</span
+                        >
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Driver Card 4 (Active) -->
+              <div
+                class="group flex flex-col bg-white rounded-xl shadow-sm border border-[#e6e0db] hover:shadow-md transition-shadow overflow-hidden"
+              >
+                <div class="p-5 flex flex-col gap-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                      <div class="relative">
+                        <div
+                          class="bg-center bg-cover size-14 rounded-full border-2 border-white shadow-sm"
+                          data-alt="Portrait of a young woman with glasses"
+                          style="
+                            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuBCB369AUscTNpHpZUNrvwvCjkiDEkhVLdPCZ7h4i_e006l27oEvTCsh8Vwl3RvkPvDxsInEyEZ4qNmB3-x6Yhn-KL5VJ3yXoSqwcIyDT1R_dNVyRf90m0JSUOwyocE8ZShh4br8IVO3G3B4iXXMZIgBVzIPONqPqxTJ4efpRgtDXmVoRRGC7b4u7BL9HKTTWbibVn6mQ-bpyocsKwSFX-1pBM8fgsT3ZwfDmn48yOKnDds6ekomDdI6V4WptmGoJ9M8IvnbbR8weHP');
+                          "
+                        ></div>
+                        <div
+                          class="absolute bottom-0 right-0 size-3.5 bg-[#07880e] rounded-full border-2 border-white"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-[#181411] text-lg font-bold">
+                          Jessica Lee
+                        </h3>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                          <span
+                            class="bg-[#f5f2f0] text-[#8a7560] text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide"
+                            >Student</span
+                          >
+                          <span class="text-[#8a7560] text-xs">#D-415</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-[#07880e]/10 px-2.5 py-1 text-xs font-semibold text-[#07880e]"
+                    >
+                      Available
+                    </span>
+                  </div>
+                  <div
+                    class="grid grid-cols-3 divide-x divide-[#f5f2f0] border-t border-b border-[#f5f2f0] py-3"
+                  >
+                    <div class="flex flex-col items-center px-2">
+                      <div class="flex items-center gap-1 text-[#f48c25]">
+                        <span class="text-sm font-bold">5.0</span>
+                        <span
+                          class="material-symbols-outlined text-[14px] fill-1"
+                          >star</span
+                        >
+                      </div>
+                      <span class="text-[11px] text-[#8a7560]">Rating</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">112</span>
+                      <span class="text-[11px] text-[#8a7560]">Trips</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">100%</span>
+                      <span class="text-[11px] text-[#8a7560]">On-Time</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-[#8a7560]">
+                      <span class="material-symbols-outlined text-[20px]"
+                        >electric_scooter</span
+                      >
+                      <span class="text-sm">E-Scooter</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >chat_bubble</span
+                        >
+                      </button>
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >person</span
+                        >
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Driver Card 5 (Busy) -->
+              <div
+                class="group flex flex-col bg-white rounded-xl shadow-sm border border-[#e6e0db] hover:shadow-md transition-shadow overflow-hidden"
+              >
+                <div class="p-5 flex flex-col gap-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                      <div class="relative">
+                        <div
+                          class="bg-center bg-cover size-14 rounded-full border-2 border-white shadow-sm"
+                          data-alt="Portrait of a male driver with beard"
+                          style="
+                            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuAJ96LIxeVP_D8ryq3uWXtBzEeWjasPd4uMP7j66iQgyV7VrF7zoH6YYmCuFIcTKtUPbL-msogjD5LbQZwX3rrfUBKSI5JK5Csgj0ErWbM53qOlH447DqO9zw12v2KKzIcElu9Jy4at6Uk5x6qOuWYYVXXp7pNraVQVKVJt_zljC1OqD0PZOVm0I9WV2wXihhtThfhQ4ZOY-4Ufy_5PQBP340rFqxxKbpB5nZpQmZSiYnJ3CyFHN0jsGneqARdB-9CpBGWiFaJ77AsM');
+                          "
+                        ></div>
+                        <div
+                          class="absolute bottom-0 right-0 size-3.5 bg-primary rounded-full border-2 border-white"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-[#181411] text-lg font-bold">
+                          David Kim
+                        </h3>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                          <span
+                            class="bg-[#f5f2f0] text-[#8a7560] text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide"
+                            >Student</span
+                          >
+                          <span class="text-[#8a7560] text-xs">#D-420</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2.5 py-1 text-xs font-semibold text-primary"
+                    >
+                      Delivering
+                    </span>
+                  </div>
+                  <div
+                    class="grid grid-cols-3 divide-x divide-[#f5f2f0] border-t border-b border-[#f5f2f0] py-3"
+                  >
+                    <div class="flex flex-col items-center px-2">
+                      <div class="flex items-center gap-1 text-[#f48c25]">
+                        <span class="text-sm font-bold">4.6</span>
+                        <span
+                          class="material-symbols-outlined text-[14px] fill-1"
+                          >star</span
+                        >
+                      </div>
+                      <span class="text-[11px] text-[#8a7560]">Rating</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">543</span>
+                      <span class="text-[11px] text-[#8a7560]">Trips</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">96%</span>
+                      <span class="text-[11px] text-[#8a7560]">On-Time</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-[#8a7560]">
+                      <span class="material-symbols-outlined text-[20px]"
+                        >pedal_bike</span
+                      >
+                      <span class="text-sm">Bike</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >chat_bubble</span
+                        >
+                      </button>
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >person</span
+                        >
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+              <!-- Driver Card 6 (Active) -->
+              <div
+                class="group flex flex-col bg-white rounded-xl shadow-sm border border-[#e6e0db] hover:shadow-md transition-shadow overflow-hidden"
+              >
+                <div class="p-5 flex flex-col gap-4">
+                  <div class="flex justify-between items-start">
+                    <div class="flex gap-3">
+                      <div class="relative">
+                        <div
+                          class="bg-center bg-cover size-14 rounded-full border-2 border-white shadow-sm"
+                          data-alt="Portrait of a smiling older man"
+                          style="
+                            background-image: url('https://lh3.googleusercontent.com/aida-public/AB6AXuC4a9YW1uaflenSk4OM2BRcHLk-OsNXjSvenGc-XlRomaOyh5zErctaKz1IVaLhHmznVNsC4jdytvB28N6I1nHFIa0LRWez-AYVLLTt4kfcN3-Tg4iGCNqsqkJHr54-ASzNu_QW-Gbgix_cyuFYoGpTECCTd3ZPdBLYmLjOGt9mSy12bDSRqM1f9doZmUtMTab7yuiQ-rJKfTKHIW94gMZHw5FTh9ffFN0DoxS8VasZ46lFDhTW-BS-FkLUn102gwKYX1MmxpImhVz-');
+                          "
+                        ></div>
+                        <div
+                          class="absolute bottom-0 right-0 size-3.5 bg-[#07880e] rounded-full border-2 border-white"
+                        ></div>
+                      </div>
+                      <div>
+                        <h3 class="text-[#181411] text-lg font-bold">
+                          Robert Fox
+                        </h3>
+                        <div class="flex items-center gap-1.5 mt-0.5">
+                          <span
+                            class="bg-[#f5f2f0] text-[#8a7560] text-[10px] font-bold px-1.5 py-0.5 rounded uppercase tracking-wide"
+                            >Full-Time</span
+                          >
+                          <span class="text-[#8a7560] text-xs">#D-399</span>
+                        </div>
+                      </div>
+                    </div>
+                    <span
+                      class="inline-flex items-center gap-1 rounded-full bg-[#07880e]/10 px-2.5 py-1 text-xs font-semibold text-[#07880e]"
+                    >
+                      Available
+                    </span>
+                  </div>
+                  <div
+                    class="grid grid-cols-3 divide-x divide-[#f5f2f0] border-t border-b border-[#f5f2f0] py-3"
+                  >
+                    <div class="flex flex-col items-center px-2">
+                      <div class="flex items-center gap-1 text-[#f48c25]">
+                        <span class="text-sm font-bold">4.8</span>
+                        <span
+                          class="material-symbols-outlined text-[14px] fill-1"
+                          >star</span
+                        >
+                      </div>
+                      <span class="text-[11px] text-[#8a7560]">Rating</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]"
+                        >2,102</span
+                      >
+                      <span class="text-[11px] text-[#8a7560]">Trips</span>
+                    </div>
+                    <div class="flex flex-col items-center px-2">
+                      <span class="text-sm font-bold text-[#181411]">99%</span>
+                      <span class="text-[11px] text-[#8a7560]">On-Time</span>
+                    </div>
+                  </div>
+                  <div class="flex items-center justify-between">
+                    <div class="flex items-center gap-2 text-[#8a7560]">
+                      <span class="material-symbols-outlined text-[20px]"
+                        >directions_car</span
+                      >
+                      <span class="text-sm">Car</span>
+                    </div>
+                    <div class="flex gap-2">
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >chat_bubble</span
+                        >
+                      </button>
+                      <button
+                        class="size-9 flex items-center justify-center rounded-full bg-[#f8f7f5] text-[#181411] hover:bg-[#e6e0db] transition-colors"
+                      >
+                        <span class="material-symbols-outlined text-[18px]"
+                          >person</span
+                        >
+                      </button>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </main>
+    </div>
+  </body>
+</html>
