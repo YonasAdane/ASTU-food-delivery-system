@@ -1,154 +1,166 @@
-"use client"
+"use client";
 
-import { useState, useCallback } from "react"
-import { PartnerSidebar } from "@/components/profile/partner-sidebar"
-import { PartnerHeader } from "@/components/profile/partner-header"
-import { RestaurantCover } from "@/components/profile/restaurant-cover"
-import { BasicInformation } from "@/components/profile/basic-information"
-import { LocationContact } from "@/components/profile/location-contact"
-import { Button } from "@/components/ui/button"
-import { Save } from "lucide-react"
-import { toast } from "sonner"
-import { format } from "date-fns"
-import { RestaurantProfileData } from "@/types/restaurant"
+import Head from "next/head";
 
-const defaultData: RestaurantProfileData = {
-  restaurantName: "Spicy Bites",
-  tagline: "Best Tacos on Campus",
-  cuisineType: "Mexican",
-  priceRange: "$$ (Moderate)",
-  address: "Adama Science and Technology University",
-  latitude: 38.7577,
-  longitude: -9.1168,
-  coverImage: "https://images.unsplash.com/photo-1517248135467-4c7edcad34c4?w=1200&q=80",
-  logoImage: null,
+function Icon({
+  name,
+  className = "",
+}: {
+  name?: string;
+  className?: string;
+}) {
+  if (!name) return null;
+  return (
+    <span className={`material-symbols-outlined ${className}`}>
+      {name}
+    </span>
+  );
 }
 
 export default function RestaurantProfilePage() {
-  const [profileData, setProfileData] = useState<RestaurantProfileData>(defaultData)
-  const [originalData, setOriginalData] = useState<RestaurantProfileData>(defaultData)
-  const [lastSaved, setLastSaved] = useState<Date | null>(null)
-  const [hasChanges, setHasChanges] = useState(false)
-
-  const updateProfileData = useCallback((updates: Partial<RestaurantProfileData>) => {
-    setProfileData((prev) => {
-      const newData = { ...prev, ...updates }
-    
-      const prevForCompare = { ...prev, coverImage: prev.coverImage instanceof File ? "FILE" : prev.coverImage, logoImage: prev.logoImage instanceof File ? "FILE" : prev.logoImage }
-      const newForCompare = { ...newData, coverImage: newData.coverImage instanceof File ? "FILE" : newData.coverImage, logoImage: newData.logoImage instanceof File ? "FILE" : newData.logoImage }
-      const origForCompare = { ...originalData, coverImage: originalData.coverImage instanceof File ? "FILE" : originalData.coverImage, logoImage: originalData.logoImage instanceof File ? "FILE" : originalData.logoImage }
-      const changed = JSON.stringify(newForCompare) !== JSON.stringify(origForCompare)
-      setHasChanges(changed)
-      return newData
-    })
-  }, [originalData])
-
-  const handleSave = useCallback(async () => {
-    try {
-   
-      const formData = new FormData()
-      Object.entries(profileData).forEach(([key, value]) => {
-        if (value instanceof File) {
-          formData.append(key, value)
-        } else if (value !== null) {
-          formData.append(key, String(value))
-        }
-      })
-
-      await new Promise((resolve) => setTimeout(resolve, 1000))
-
-   
-      const savedData: RestaurantProfileData = {
-        ...profileData,
-        coverImage: profileData.coverImage instanceof File 
-          ? URL.createObjectURL(profileData.coverImage) 
-          : profileData.coverImage,
-        logoImage: profileData.logoImage instanceof File 
-          ? URL.createObjectURL(profileData.logoImage) 
-          : profileData.logoImage,
-      }
-      
-      setOriginalData(savedData)
-      setLastSaved(new Date())
-      setHasChanges(false)
-      toast.success("Profile saved successfully!")
-    } catch (error) {
-      toast.error("Failed to save profile. Please try again.")
-      console.error("Save error:", error)
-    }
-  }, [profileData])
-
-  const handleDiscard = useCallback(() => {
-    setProfileData({ ...originalData })
-    setHasChanges(false)
-    toast.info("Changes discarded")
-  }, [originalData])
-
   return (
-    <div className="flex min-h-screen bg-background">
-      <PartnerSidebar />
-      <div className="flex-1 flex flex-col">
-        <PartnerHeader />
-        <main className="flex-1 p-8 bg-background">
-          <div className="mb-6">
-            <h1 className="text-3xl font-bold text-foreground">Restaurant Profile</h1>
-            <p className="text-muted-foreground mt-1">
-              Manage your restaurant&apos;s public information, branding, and operating details.
-            </p>
+    <>
+      <Head>
+        <title>Restaurant Profile</title>
+        <link
+          href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined"
+          rel="stylesheet"
+        />
+      </Head>
+
+      {/* PAGE CONTENT ONLY – Sidebar comes from layout */}
+      <div className="p-6 md:p-10 max-w-[1200px] mx-auto space-y-8">
+        {/* HEADER */}
+        <div>
+          <h1 className="text-3xl font-black">Restaurant Profile</h1>
+          <p className="text-muted-foreground">
+            Manage your restaurant information and branding
+          </p>
+        </div>
+
+        {/* COVER & AVATAR */}
+        <section className="bg-card border rounded-xl overflow-hidden">
+          <div className="h-56 bg-muted relative">
+            <button className="absolute bottom-4 right-4 bg-background border px-4 py-2 rounded-lg text-sm flex items-center gap-2">
+              <Icon name="add_a_photo" /> Change Cover
+            </button>
           </div>
 
-          <RestaurantCover 
-            coverImage={profileData.coverImage}
-            logoImage={profileData.logoImage}
-            restaurantName={profileData.restaurantName}
-            cuisineType={profileData.cuisineType}
-            onCoverImageChange={(file) => updateProfileData({ coverImage: file })}
-            onLogoImageChange={(file) => updateProfileData({ logoImage: file })}
-          />
+          <div className="p-6 -mt-16 flex flex-col sm:flex-row justify-between items-start sm:items-end gap-6">
+            <div className="flex items-end gap-4">
+              <div className="relative">
+                <div className="h-32 w-32 rounded-full bg-muted border-4 border-background" />
+                <button className="absolute bottom-1 right-1 bg-primary text-primary-foreground p-2 rounded-full">
+                  <Icon name="edit" />
+                </button>
+              </div>
 
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6 mt-6">
-            <BasicInformation 
-              data={profileData}
-              onDataChange={updateProfileData}
+              <div>
+                <h3 className="text-2xl font-bold">Spicy Bites</h3>
+                <p className="text-sm text-muted-foreground">
+                  Mexican Cuisine
+                </p>
+              </div>
+            </div>
+
+            <span className="px-4 py-1.5 bg-green-100 text-green-700 dark:bg-green-900/30 dark:text-green-400 rounded-lg text-sm font-semibold">
+              Open for Orders
+            </span>
+          </div>
+        </section>
+
+        {/* FORMS */}
+        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+          <Card title="Basic Information" icon="restaurant">
+            <Input label="Restaurant Name" defaultValue="Spicy Bites" />
+            <Input label="Tagline" defaultValue="Best Tacos on Campus" />
+            <Textarea label="Description" />
+          </Card>
+
+          <Card title="Location & Contact" icon="location_on">
+            <Input
+              label="Address"
+              defaultValue="Building B, Student Center"
             />
-            <LocationContact 
-              address={profileData.address}
-              latitude={profileData.latitude}
-              longitude={profileData.longitude}
-              onLocationChange={(address, lat, lng) => 
-                updateProfileData({ address, latitude: lat, longitude: lng })
-              }
+            <Input
+              label="Phone"
+              defaultValue="+1 (555) 123-4567"
             />
-          </div>
-        </main>
+            <Input
+              label="Email"
+              defaultValue="contact@spicybites.edu"
+            />
+          </Card>
+        </div>
 
-        <footer className="border-t border-border bg-card px-8 py-4 flex items-center justify-between">
-          <span className="text-sm text-muted-foreground">
-            {lastSaved 
-              ? `Last saved: ${format(lastSaved, "MMM d, yyyy 'at' h:mm a")}`
-              : "No changes saved yet"
-            }
-          </span>
-          <div className="flex items-center gap-3">
-            <Button 
-              variant="outline" 
-              className="bg-transparent text-foreground border-border"
-              onClick={handleDiscard}
-              disabled={!hasChanges}
-            >
-              Discard Changes
-            </Button>
-            <Button 
-              className="bg-amber-500 hover:bg-amber-600 dark:bg-amber-600 dark:hover:bg-amber-700 text-white"
-              onClick={handleSave}
-              disabled={!hasChanges}
-            >
-              <Save className="w-4 h-4 mr-2" />
-              Save Profile
-            </Button>
-          </div>
-        </footer>
+        {/* ACTIONS */}
+        <div className="flex justify-end gap-3">
+          <button className="px-5 py-2 border rounded-lg">
+            Discard Changes
+          </button>
+          <button className="px-5 py-2 bg-primary text-primary-foreground rounded-lg flex items-center gap-2">
+            <Icon name="save" /> Save Profile
+          </button>
+        </div>
       </div>
+    </>
+  );
+}
+
+/* ----------------- COMPONENTS ----------------- */
+
+function Card({
+  title,
+  icon,
+  children,
+}: {
+  title: string;
+  icon: string;
+  children: React.ReactNode;
+}) {
+  return (
+    <div className="bg-card border rounded-xl p-6 space-y-4">
+      <div className="flex items-center gap-3 border-b pb-3">
+        <div className="p-2 bg-primary/10 text-primary rounded-lg">
+          <Icon name={icon} />
+        </div>
+        <h3 className="font-bold">{title}</h3>
+      </div>
+      {children}
     </div>
-  )
+  );
+}
+
+function Input({
+  label,
+  defaultValue,
+}: {
+  label: string;
+  defaultValue?: string;
+}) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-sm font-medium text-muted-foreground">
+        {label}
+      </label>
+      <input
+        defaultValue={defaultValue}
+        className="border rounded-lg px-3 py-2 text-sm bg-background"
+      />
+    </div>
+  );
+}
+
+function Textarea({ label }: { label: string }) {
+  return (
+    <div className="flex flex-col gap-1">
+      <label className="text-sm font-medium text-muted-foreground">
+        {label}
+      </label>
+      <textarea
+        rows={4}
+        className="border rounded-lg px-3 py-2 text-sm bg-background"
+      />
+    </div>
+  );
 }
