@@ -33,7 +33,8 @@ const userSchema = new mongoose.Schema({
       return this.role === "driver";
     },
   },
-
+  firstName: { type: String, trim: true },
+  lastName: { type: String, trim: true },
   resetPasswordToken: { type: String },
   resetPasswordExpires: { type: Date },
   googleId: { type: String },
