@@ -28,7 +28,7 @@ const publicRoutes = ['/'];
 const roleRedirectMap: Record<string, string> = {
   customer: '/customer/restaurant',
   restaurant: '/restaurant',
-  driver: '/driver',
+  driver: '/driver/dashboard',
   admin: '/admin',
 };
 

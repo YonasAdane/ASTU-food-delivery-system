@@ -7,395 +7,240 @@ const User = require("./models/Users");
 const logger = require("./utils/logger");
 const connectDB = require("./config/db");
 
-// Joi schemas for validation
 const userSchema = Joi.object({
-  email: Joi.string().email().required().messages({
-    "string.email": "Email must be a valid email address",
-    "any.required": "Email is required",
-  }),
-  phone: Joi.string()
-    .pattern(/^\+?\d{10,15}$/)
-    .required()
-    .messages({
-      "string.pattern.base":
-        "Phone must be a valid phone number (10-15 digits)",
-      "any.required": "Phone is required",
-    }),
-  password: Joi.string().min(8).required().messages({
-    "string.min": "Password must be at least 8 characters",
-    "any.required": "Password is required",
-  }),
-  role: Joi.string().valid("restaurant").required().messages({
-    "string.valid": "Role must be restaurant for seeding",
-  }),
+  email: Joi.string().email().required(),
+  phone: Joi.string().pattern(/^\+?\d{10,15}$/).required(),
+  password: Joi.string().min(8).required(),
+  role: Joi.string().valid("restaurant").required(),
 });
 
 const restaurantSchema = Joi.object({
-  name: Joi.string()
-    .required()
-    .messages({ "any.required": "Restaurant name is required" }),
+  name: Joi.string().required(),
   location: Joi.object({
     type: Joi.string().valid("Point").required(),
     coordinates: Joi.array().items(Joi.number()).length(2).required(),
   }).required(),
-  menu: Joi.array()
-    .items(
-      Joi.object({
-        name: Joi.string().required(),
-        price: Joi.number().positive().required(),
-        description: Joi.string().allow(""),
-        image: Joi.string().allow(""),
-        inStock: Joi.boolean().default(true),
-        
-      })
-    )
-    .required(),
+  area: Joi.string().valid("Bole", "Geda", "Kereyu", "Fresh", "04", "Posta", "Mebrat", "Other").required(),
+  menu: Joi.array().items(Joi.object({
+    name: Joi.string().required(),
+    price: Joi.number().positive().required(),
+    description: Joi.string().allow(""),
+    image: Joi.string().allow(""),
+    inStock: Joi.boolean().default(true),
+  })).required(),
   verified: Joi.boolean().default(true),
+  ratings: Joi.number().min(0).max(5).default(0),
+  reviewsCount: Joi.number().min(0).default(0),
+  deliveryTime: Joi.number().min(0).default(30),
+  ownerId: Joi.string().required(), // <-- Add this line
 });
 
-const seedData = [
+
+const rawSeedData = [
   {
     name: "Injera House",
     location: { type: "Point", coordinates: [38.7578, 9.0346] },
-    menu: [
-      {
-        name: "Doro Wat",
-        price: 120,
-        description: "Spicy chicken stew with egg",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Tibs",
-        price: 90,
-        description: "Fried beef cubes with onions and spices",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "injera@fooddelivery.com",
-      phone: "+251912345678",
-      password: "Injera2025!",
-      role: "restaurant",
-    },
+    menu: [{ name: "Doro Wat", price: 120, description: "Spicy chicken stew", inStock: true }],
+    ratings: 4.8,
+    reviewsCount: 120,
+    user: { email: "injera@fooddelivery.com", phone: "+251912345678", password: "Injera2025!", role: "restaurant" },
   },
   {
     name: "Little Italy",
     location: { type: "Point", coordinates: [38.7489, 9.0302] },
-    menu: [
-      {
-        name: "Lasagna",
-        price: 150,
-        description: "Layers of pasta with cheese and sauce",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Garlic Bread",
-        price: 40,
-        description: "Crispy bread with garlic butter",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "italy@fooddelivery.com",
-      phone: "+251912345679",
-      password: "Italy2025!",
-      role: "restaurant",
-    },
+    menu: [{ name: "Lasagna", price: 150, description: "Cheesy pasta", inStock: true }],
+    ratings: 4.5,
+    reviewsCount: 150,
+    user: { email: "italy@fooddelivery.com", phone: "+251912345679", password: "Italy2025!", role: "restaurant" },
   },
   {
     name: "Sushi Zen",
     location: { type: "Point", coordinates: [38.7611, 9.0403] },
-    menu: [
-      {
-        name: "California Roll",
-        price: 180,
-        description: "Crab, avocado, cucumber",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Salmon Nigiri",
-        price: 200,
-        description: "Salmon over vinegared rice",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "sushi@fooddelivery.com",
-      phone: "+251912345680",
-      password: "Sushi2025!",
-      role: "restaurant",
-    },
+    menu: [{ name: "California Roll", price: 180, description: "Crab & avocado", inStock: true }],
+    ratings: 4.7,
+    reviewsCount: 200,
+    user: { email: "sushi@fooddelivery.com", phone: "+251912345680", password: "Sushi2025!", role: "restaurant" },
   },
   {
-    name: "Burger Base",
-    location: { type: "Point", coordinates: [38.7633, 9.0455] },
-    menu: [
-      {
-        name: "Classic Burger",
-        price: 95,
-        description: "Beef patty with lettuce and cheese",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Fries",
-        price: 30,
-        description: "Crispy golden fries",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "burger@fooddelivery.com",
-      phone: "+251912345681",
-      password: "Burger2025!",
-      role: "restaurant",
-    },
+    name: "Spice Corner",
+    location: { type: "Point", coordinates: [38.755, 9.036] },
+    menu: [{ name: "Chicken Curry", price: 130, description: "Savory curry with rice", inStock: true }],
+    ratings: 4.2,
+    reviewsCount: 80,
+    user: { email: "spice@fooddelivery.com", phone: "+251912345681", password: "Spice2025!", role: "restaurant" },
   },
   {
-    name: "Vegan Vibes",
-    location: { type: "Point", coordinates: [38.7592, 9.039] },
-    menu: [
-      {
-        name: "Tofu Stir Fry",
-        price: 110,
-        description: "Tofu with mixed vegetables",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Vegan Bowl",
-        price: 125,
-        description: "Grains, greens, and beans",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "vegan@fooddelivery.com",
-      phone: "+251912345682",
-      password: "Vegan2025!",
-      role: "restaurant",
-    },
+    name: "Burger Hub",
+    location: { type: "Point", coordinates: [38.750, 9.038] },
+    menu: [{ name: "Cheeseburger", price: 90, description: "Beef burger with cheese", inStock: true }],
+    ratings: 4.1,
+    reviewsCount: 100,
+    user: { email: "burger@fooddelivery.com", phone: "+251912345682", password: "Burger2025!", role: "restaurant" },
   },
   {
-    name: "Shawarma King",
-    location: { type: "Point", coordinates: [38.766, 9.048] },
-    menu: [
-      {
-        name: "Chicken Shawarma",
-        price: 85,
-        description: "Grilled chicken with garlic sauce",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Falafel Wrap",
-        price: 70,
-        description: "Chickpea balls in pita bread",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "shawarma@fooddelivery.com",
-      phone: "+251912345683",
-      password: "Shawarma2025!",
-      role: "restaurant",
-    },
+    name: "Pasta Palace",
+    location: { type: "Point", coordinates: [38.758, 9.042] },
+    menu: [{ name: "Spaghetti Bolognese", price: 140, description: "Classic Italian pasta", inStock: true }],
+    ratings: 4.6,
+    reviewsCount: 95,
+    user: { email: "pasta@fooddelivery.com", phone: "+251912345683", password: "Pasta2025!", role: "restaurant" },
   },
   {
-    name: "Curry Spot",
-    location: { type: "Point", coordinates: [38.7512, 9.0378] },
-    menu: [
-      {
-        name: "Chicken Curry",
-        price: 130,
-        description: "Spicy Indian-style curry",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Naan Bread",
-        price: 35,
-        description: "Oven-baked flatbread",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "curry@fooddelivery.com",
-      phone: "+251912345684",
-      password: "Curry2025!",
-      role: "restaurant",
-    },
+    name: "Veggie Delight",
+    location: { type: "Point", coordinates: [38.752, 9.033] },
+    menu: [{ name: "Grilled Veg Sandwich", price: 80, description: "Healthy and tasty", inStock: true }],
+    ratings: 4.4,
+    reviewsCount: 70,
+    user: { email: "veggie@fooddelivery.com", phone: "+251912345684", password: "Veggie2025!", role: "restaurant" },
   },
   {
-    name: "MexiBites",
-    location: { type: "Point", coordinates: [38.7644, 9.0321] },
-    menu: [
-      {
-        name: "Tacos",
-        price: 80,
-        description: "Corn tortillas with beef and salsa",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Burrito Bowl",
-        price: 140,
-        description: "Rice, beans, veggies, and meat",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "mexi@fooddelivery.com",
-      phone: "+251912345685",
-      password: "Mexi2025!",
-      role: "restaurant",
-    },
+    name: "Seafood Shack",
+    location: { type: "Point", coordinates: [38.759, 9.035] },
+    menu: [{ name: "Grilled Fish", price: 200, description: "Fresh fish with spices", inStock: true }],
+    ratings: 4.7,
+    reviewsCount: 110,
+    user: { email: "seafood@fooddelivery.com", phone: "+251912345685", password: "Seafood2025!", role: "restaurant" },
   },
   {
-    name: "Waffle World",
-    location: { type: "Point", coordinates: [38.7493, 9.0356] },
-    menu: [
-      {
-        name: "Belgian Waffle",
-        price: 75,
-        description: "Thick waffle with syrup",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Strawberry Delight",
-        price: 90,
-        description: "Waffle topped with strawberries",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "waffle@fooddelivery.com",
-      phone: "+251912345686",
-      password: "Waffle2025!",
-      role: "restaurant",
-    },
+    name: "Taco Town",
+    location: { type: "Point", coordinates: [38.754, 9.039] },
+    menu: [{ name: "Beef Taco", price: 100, description: "Spicy taco with beef", inStock: true }],
+    ratings: 4.3,
+    reviewsCount: 60,
+    user: { email: "taco@fooddelivery.com", phone: "+251912345686", password: "Taco2025!", role: "restaurant" },
   },
   {
-    name: "Fusion Feast",
-    location: { type: "Point", coordinates: [38.7557, 9.0382] },
-    menu: [
-      {
-        name: "Korean BBQ Pizza",
-        price: 160,
-        description: "Pizza with Korean-style beef",
-        image: "",
-        inStock: true,
-      },
-      {
-        name: "Samosa Tacos",
-        price: 85,
-        description: "Fusion of Indian samosas and Mexican tacos",
-        image: "",
-        inStock: true,
-      },
-    ],
-    verified: true,
-    user: {
-      email: "fusion@fooddelivery.com",
-      phone: "+251912345687",
-      password: "Fusion2025!",
-      role: "restaurant",
-    },
+    name: "Curry Leaf",
+    location: { type: "Point", coordinates: [38.756, 9.031] },
+    menu: [{ name: "Lamb Curry", price: 160, description: "Delicious lamb curry", inStock: true }],
+    ratings: 4.5,
+    reviewsCount: 85,
+    user: { email: "curry@fooddelivery.com", phone: "+251912345687", password: "Curry2025!", role: "restaurant" },
   },
+  {
+    name: "BBQ Barn",
+    location: { type: "Point", coordinates: [38.751, 9.037] },
+    menu: [{ name: "BBQ Ribs", price: 210, description: "Juicy ribs with sauce", inStock: true }],
+    ratings: 4.6,
+    reviewsCount: 120,
+    user: { email: "bbq@fooddelivery.com", phone: "+251912345688", password: "BBQ2025!", role: "restaurant" },
+  },
+  {
+    name: "Noodle Nook",
+    location: { type: "Point", coordinates: [38.753, 9.041] },
+    menu: [{ name: "Beef Noodles", price: 130, description: "Stir-fried noodles with beef", inStock: true }],
+    ratings: 4.4,
+    reviewsCount: 75,
+    user: { email: "noodle@fooddelivery.com", phone: "+251912345689", password: "Noodle2025!", role: "restaurant" },
+  },
+  {
+    name: "Pizza Planet",
+    location: { type: "Point", coordinates: [38.760, 9.036] },
+    menu: [{ name: "Pepperoni Pizza", price: 150, description: "Cheesy pepperoni pizza", inStock: true }],
+    ratings: 4.5,
+    reviewsCount: 140,
+    user: { email: "pizza@fooddelivery.com", phone: "+251912345690", password: "Pizza2025!", role: "restaurant" },
+  },
+  {
+    name: "Kebab Kingdom",
+    location: { type: "Point", coordinates: [38.757, 9.038] },
+    menu: [{ name: "Chicken Kebab", price: 110, description: "Grilled chicken on skewer", inStock: true }],
+    ratings: 4.2,
+    reviewsCount: 90,
+    user: { email: "kebab@fooddelivery.com", phone: "+251912345691", password: "Kebab2025!", role: "restaurant" },
+  },
+  {
+    name: "Salad Stop",
+    location: { type: "Point", coordinates: [38.755, 9.034] },
+    menu: [{ name: "Caesar Salad", price: 85, description: "Fresh greens with dressing", inStock: true }],
+    ratings: 4.3,
+    reviewsCount: 65,
+    user: { email: "salad@fooddelivery.com", phone: "+251912345692", password: "Salad2025!", role: "restaurant" },
+  },
+  {
+    name: "Wrap & Roll",
+    location: { type: "Point", coordinates: [38.758, 9.032] },
+    menu: [{ name: "Chicken Wrap", price: 95, description: "Tasty wrap with veggies", inStock: true }],
+    ratings: 4.4,
+    reviewsCount: 70,
+    user: { email: "wrap@fooddelivery.com", phone: "+251912345693", password: "Wrap2025!", role: "restaurant" },
+  },
+  {
+    name: "Dessert Den",
+    location: { type: "Point", coordinates: [38.752, 9.039] },
+    menu: [{ name: "Chocolate Cake", price: 75, description: "Rich chocolate dessert", inStock: true }],
+    ratings: 4.6,
+    reviewsCount: 110,
+    user: { email: "dessert@fooddelivery.com", phone: "+251912345694", password: "Dessert2025!", role: "restaurant" },
+  },
+  {
+    name: "Grill House",
+    location: { type: "Point", coordinates: [38.754, 9.035] },
+    menu: [{ name: "Grilled Steak", price: 220, description: "Juicy grilled steak", inStock: true }],
+    ratings: 4.7,
+    reviewsCount: 130,
+    user: { email: "grill@fooddelivery.com", phone: "+251912345695", password: "Grill2025!", role: "restaurant" },
+  },
+  {
+    name: "Biryani Bowl",
+    location: { type: "Point", coordinates: [38.759, 9.033] },
+    menu: [{ name: "Chicken Biryani", price: 160, description: "Spiced rice with chicken", inStock: true }],
+    ratings: 4.5,
+    reviewsCount: 90,
+    user: { email: "biryani@fooddelivery.com", phone: "+251912345696", password: "Biryani2025!", role: "restaurant" },
+  },
+  {
+    name: "Coffee & Co",
+    location: { type: "Point", coordinates: [38.756, 9.040] },
+    menu: [{ name: "Cappuccino", price: 50, description: "Hot coffee drink", inStock: true }],
+    ratings: 4.2,
+    reviewsCount: 50,
+    user: { email: "coffee@fooddelivery.com", phone: "+251912345697", password: "Coffee2025!", role: "restaurant" },
+  }
 ];
+
+
+const areas = ["Bole", "Geda", "Kereyu", "Fresh", "04", "Posta", "Mebrat", "Other"];
 
 const seedRestaurants = async () => {
   try {
     await connectDB();
-    logger.info("✅ Connected to MongoDB");
-
-    // Clear existing data
     await User.deleteMany({ role: "restaurant" });
     await Restaurant.deleteMany();
-    logger.info("🧹 Cleared existing restaurant and user data");
 
-    const restaurantsToInsert = [];
-    for (const data of seedData) {
-      // Validate user data
-      const { error: userError, value: userData } = userSchema.validate(
-        data.user
-      );
-      if (userError) {
-        throw new Error(
-          `User validation failed for ${data.name}: ${userError.details
-            .map((d) => d.message)
-            .join(", ")}`
-        );
-      }
+    for (const data of rawSeedData) {
+      const assignedArea = areas[Math.floor(Math.random() * areas.length)];
+      const deliveryTime = Math.floor(Math.random() * 20) + 20; // 20-40 mins
 
-      // Validate restaurant data
-      const { error: restaurantError } = restaurantSchema.validate({
-        name: data.name,
-        location: data.location,
-        menu: data.menu,
-        verified: data.verified,
-      });
-      if (restaurantError) {
-        throw new Error(
-          `Restaurant validation failed for ${
-            data.name
-          }: ${restaurantError.details.map((d) => d.message).join(", ")}`
-        );
-      }
-
-      // Hash password
+      // Validate User
+      const { value: userData } = userSchema.validate(data.user);
       const hashedPassword = await bcrypt.hash(userData.password, 10);
-
-      // Create user
-      const user = new User({
-        email: userData.email,
-        phone: userData.phone,
-        password: userData.password,
-        role: userData.role,
-      });
+      const user = new User({ ...userData, password: hashedPassword });
       await user.save();
 
-      // Prepare restaurant with ownerId
-      restaurantsToInsert.push({
+      // Validate and Create Restaurant
+      const restaurantPayload = {
         name: data.name,
         location: data.location,
-        ownerId: user._id,
+        area: assignedArea,
         menu: data.menu,
-        verified: data.verified,
-      });
+        verified: data.verified || true,
+        ratings: data.ratings || 0,
+        reviewsCount: data.reviewsCount || 0,
+        deliveryTime: deliveryTime,
+        ownerId: String(user._id)
+      };
+
+      const { error: resError } = restaurantSchema.validate(restaurantPayload);
+      if (resError) throw new Error(resError.details[0].message);
+
+      await Restaurant.create(restaurantPayload);
     }
 
-    // Insert restaurants
-    await Restaurant.insertMany(restaurantsToInsert);
-    logger.info("🍽️ Seeded restaurants and users successfully");
-    await mongoose.connection.close();
-    logger.info("🔌 MongoDB connection closed");
+    logger.info("🍽️ Seeded successfully");
     process.exit();
   } catch (err) {
-    logger.error(`❌ Error seeding data: ${err.message}`);
-    await mongoose.connection.close();
+    logger.error(`❌ Error: ${err.message}`);
     process.exit(1);
   }
 };

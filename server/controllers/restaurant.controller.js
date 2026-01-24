@@ -241,46 +241,65 @@ const updateMenuItem = async (req, res) => {
 // Register restaurant (creates user + restaurant)
 const registerRestaurant = async (req, res) => {
   try {
-    const { email, phone, password, name, location, image, area, deliveryTime } = req.body;
+    const {
+      email,
+      phone,
+      password,
+      name,
+      image,
+      area,
+      deliveryTime,
+      latitude,
+      longitude
+    } = req.body;
+
+    // Validation (important)
+    if (
+      !area ||
+      !deliveryTime ||
+      latitude === undefined ||
+      longitude === undefined
+    ) {
+      return res.status(400).json({
+        message:
+          "area, deliveryTime, latitude and longitude are required"
+      });
+    }
 
     const userExist = await User.findOne({ email });
-    if (userExist)
+    if (userExist) {
       return res.status(400).json({ message: "Restaurant already exists" });
+    }
 
     const user = await User.create({
       email,
       phone,
       password,
-      role: "restaurant",
+      role: "restaurant"
     });
-    logger.info("Restaurant user created:", user._id);
 
     const restaurant = await Restaurant.create({
       name,
-      location,
-      area,
-      deliveryTime,
       ownerId: user._id,
       image,
+      area,
+      deliveryTime,
+      location: {
+        type: "Point",
+        coordinates: [Number(longitude), Number(latitude)] // IMPORTANT ORDER
+      }
     });
-    const { verificationCode, code } = await sendOTP(phone);
-    try {
-      const result = await redisClient.setEx(
-        `otp:${phone}`,
-        300,
-        JSON.stringify({ code, verificationCode })
-      );
-      logger.info(`Redis set results: ${result}`);
-    } catch (err) {
-      logger.error(`Redis set error: ${err.message}`);
-    }
 
-    res.status(201).json({ status: "success", data: { restaurant } });
+    res.status(201).json({
+      status: "success",
+      data: { restaurant }
+    });
   } catch (err) {
-    logger.error("Error registering restaurant:", err);
+    console.error(err);
     res.status(500).json({ message: err.message });
   }
 };
+
 // Get restaurant menu
 const getMenus = async (req, res) => {
   try {
@@ -461,8 +480,7 @@ const inviteDriver = async (req, res) => {
     logger.error("Error inviting driver:", error);
     res.status(500).json({ message: "Server error" });
   }
-};
-const assignDriverToOrder = async (req, res) => {
+};const assignDriverToOrder = async (req, res) => {
   try {
     const { orderId, driverId } = req.body;
 

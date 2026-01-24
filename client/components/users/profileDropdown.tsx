@@ -39,7 +39,7 @@ const ProfileDropdown = ({
     <DropdownMenu>
       {/* Trigger */}
       <DropdownMenuTrigger asChild>
-        <div className="h-8 w-8 rounded-full bg-indigo-100 border border-indigo-200 flex items-center justify-center cursor-pointer">
+        <div className="h-9 w-9 rounded-full bg-indigo-100 border border-indigo-700 dark:border-indigo-200 flex items-center justify-center cursor-pointer">
           <img src={avatar} alt="Profile" className="w-7 h-7 rounded-full" />
         </div>
       </DropdownMenuTrigger>
