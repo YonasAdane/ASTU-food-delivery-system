@@ -19,6 +19,8 @@ const connectDB = require("./config/db");
 const { connectRedis } = require("./config/redis");
 const logger = require("./utils/logger");
 const cookieParser = require("cookie-parser");
+const cookieSession = require("cookie-session");
+const passport = require("./config/passport");
 
 const app = express();
 
@@ -34,6 +36,19 @@ app.use(cors({
 app.use(express.json());
 app.use(cookieParser());
 app.use(express.urlencoded({ extended: true }));
+
+// Sessions for OAuth (used by Passport)
+app.use(
+  cookieSession({
+    name: "session",
+    keys: [process.env.SESSION_SECRET || "dev_secret_key"],
+    maxAge: 24 * 60 * 60 * 1000,
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
+    secure: process.env.NODE_ENV === "production",
+  })
+);
+app.use(passport.initialize());
+app.use(passport.session());
 
 app.use("/api-docs", swaggerUi.serve, swaggerUi.setup(swaggerFile));
 // Connect to MongoDB and Redis
