@@ -9,7 +9,7 @@ const driverLocationSchema = new mongoose.Schema({
   updatedAt: { type: Date, default: Date.now }
 });
 
-driverLocationSchema.index({ location: '2dsphere' });
+
 driverLocationSchema.index({ driverId: 1 });
 
 module.exports = mongoose.model('DriverLocation', driverLocationSchema);
