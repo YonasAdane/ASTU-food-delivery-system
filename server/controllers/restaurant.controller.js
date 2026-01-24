@@ -15,6 +15,32 @@ const checkOwnership = (restaurant, user) => {
 
 // Get all verified, non-deleted restaurants
 const getAllRestaurants = async (req, res) => {
+  // Redis caching: try to serve cached response, and cache successful responses
+  const cacheKey = `restaurants:${req.originalUrl}`;
+  try {
+    const cached = await redisClient.get(cacheKey);
+    if (cached) {
+      return res.status(200).json(JSON.parse(cached));
+    }
+  } catch (err) {
+    logger.error("Redis get error in getAllRestaurants:", err.message);
+  }
+
+  // Intercept res.json to cache successful responses
+  const _originalJson = res.json.bind(res);
+  res.json = (body) => {
+    try {
+      if (res.statusCode === 200) {
+        // cache for 60 seconds (adjust TTL as needed)
+        redisClient
+          .setEx(cacheKey, 60, JSON.stringify(body))
+          .catch((e) => logger.error("Redis set error in getAllRestaurants:", e.message));
+      }
+    } catch (e) {
+      logger.error("Error while attempting to cache response:", e.message);
+    }
+    return _originalJson(body);
+  };
   try {
     const {
       page = 1,
@@ -22,52 +48,48 @@ const getAllRestaurants = async (req, res) => {
       sort = 'recommended',
       search = '',
       area = '',
-      minDeliveryTime = '',
-      maxDeliveryTime = '',
+      minDelivery = '', // Renamed to match Sidebar params
+      maxDelivery = '', // Renamed to match Sidebar params
       isOpen = '',
     } = req.query;
 
+    // Base query: Only show verified and non-deleted restaurants
     const query = {
       deleted: false,
       verified: true,
     };
 
-    // Search by restaurant name
+    // 1. Search by restaurant name
     if (search) {
-      query.name = { $regex: search, $options: 'i' };
+      query.name = { $regex: search.trim(), $options: 'i' };
     }
 
-    // Filter by area
-    if (area) {
-      query.area = area;
+    // 2. Filter by Area (Matches enum in Restaurant.js)
+    if (area && area !== '') {
+      query.area = area; 
     }
 
-    // Filter by delivery time range
-    if (minDeliveryTime || maxDeliveryTime) {
+    // 3. Filter by delivery time range
+    if (minDelivery || maxDelivery) {
       query.deliveryTime = {};
-      if (minDeliveryTime) {
-        query.deliveryTime.$gte = parseInt(minDeliveryTime);
-      }
-      if (maxDeliveryTime) {
-        query.deliveryTime.$lte = parseInt(maxDeliveryTime);
-      }
+      if (minDelivery) query.deliveryTime.$gte = parseInt(minDelivery);
+      if (maxDelivery) query.deliveryTime.$lte = parseInt(maxDelivery);
     }
 
-    // Filter by open status
-    if (isOpen === 'true') {
-      query.isOpen = true;
-    } else if (isOpen === 'false') {
-      query.isOpen = false;
-    }
+    // 4. Filter by open status
+    if (isOpen === 'true') query.isOpen = true;
+    if (isOpen === 'false') query.isOpen = false;
 
-    // Sorting
+    // 5. Sorting Logic
     let sortQuery = {};
+
     switch (sort) {
       case 'rating':
         sortQuery = { ratings: -1, reviewsCount: -1 };
         break;
       case 'delivery_time':
-        sortQuery = { deliveryTime: 1 };
+        // Ensure this matches the field name in your Restaurant model!
+        sortQuery = { deliveryTime: 1 }; 
         break;
       case 'reviews':
         sortQuery = { reviewsCount: -1 };
@@ -75,8 +97,11 @@ const getAllRestaurants = async (req, res) => {
       case 'newest':
         sortQuery = { createdAt: -1 };
         break;
-      default: // 'recommended'
+      case 'recommended':
+      default:
+        // Use a multi-criteria sort for recommended
         sortQuery = { ratings: -1, reviewsCount: -1 };
+        break;
     }
 
     const pageNum = parseInt(page);
@@ -93,20 +118,20 @@ const getAllRestaurants = async (req, res) => {
     ]);
 
     res.status(200).json({
+      success: true,
       restaurants,
       pagination: {
         currentPage: pageNum,
         totalPages: Math.ceil(total / limitNum),
         totalItems: total,
-        hasNext: pageNum * limitNum < total,
-        hasPrev: pageNum > 1,
       },
     });
   } catch (err) {
-    logger.error("Failed to fetch restaurants:", err);
-    res.status(500).json({ error: "Failed to fetch restaurants." });
+    console.error("Failed to fetch restaurants:", err);
+    res.status(500).json({ error: "Internal Server Error" });
   }
 };
+
 
 // Get single restaurant by ID
 const getRestaurantById = async (req, res) => {
@@ -216,7 +241,7 @@ const updateMenuItem = async (req, res) => {
 // Register restaurant (creates user + restaurant)
 const registerRestaurant = async (req, res) => {
   try {
-    const { email, phone, password, name, location, image } = req.body;
+    const { email, phone, password, name, location, image, area, deliveryTime } = req.body;
 
     const userExist = await User.findOne({ email });
     if (userExist)
@@ -233,6 +258,8 @@ const registerRestaurant = async (req, res) => {
     const restaurant = await Restaurant.create({
       name,
       location,
+      area,
+      deliveryTime,
       ownerId: user._id,
       image,
     });
@@ -434,7 +461,8 @@ const inviteDriver = async (req, res) => {
     logger.error("Error inviting driver:", error);
     res.status(500).json({ message: "Server error" });
   }
-};const assignDriverToOrder = async (req, res) => {
+};
+const assignDriverToOrder = async (req, res) => {
   try {
     const { orderId, driverId } = req.body;
 

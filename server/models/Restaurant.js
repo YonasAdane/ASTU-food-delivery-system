@@ -14,7 +14,7 @@ const restaurantSchema = new mongoose.Schema({
     type: { type: String, enum: ["Point"], required: true },
     coordinates: { type: [Number], required: true },
   },
-  area: { type: String, required: true, trim: true }, // Added area field
+  area: { type: String, required: true, trim: true, enum:["Bole", "Geda","Kereyu","Fresh","04","Posta","Mebrat","Other"] }, 
   ownerId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: "User",
@@ -22,7 +22,7 @@ const restaurantSchema = new mongoose.Schema({
   },
   image: { type: String, trim: true },
   menu: [menuItemSchema],
-  deliveryTime: { type: Number, required: true, min: 0 }, // Added delivery time in minutes
+  deliveryTime: { type: Number, required: true, min: 0,default:30 },
   verified: { type: Boolean, default: false },
   ratings: { type: Number, default: 0, min: 0, max: 5 },
   reviewsCount: { type: Number, default: 0, min: 0 },
