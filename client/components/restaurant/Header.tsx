@@ -8,9 +8,6 @@ import {
   X,
   Home,
   ShoppingBag,
-  Wallet,
-  Calendar,
-  FolderOpenDot,
 } from "lucide-react";
 import { ModeToggle } from "../common/modeToggle";
 import { useUserStore } from "@/hooks/use-profile";

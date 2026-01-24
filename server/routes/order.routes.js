@@ -3,10 +3,10 @@ const {
   createOrder,
   getOrderHistory,
   changeOrderStatus,
-  storeFeedback, // This function comes from the 'beki.b' branch
+  storeFeedback,
+  getOrderById // This function comes from the 'beki.b' branch
 } = require("../controllers/order.controller");
 const {
-  validateCreateOrder,
   validateFeedback, // This validator comes from the 'beki.b' branch
 } = require("../validators/orderValidator");
 const protect = require("../middlewares/auth.middleware.js");
@@ -18,7 +18,6 @@ router.post(
   "/",
   protect, // Keep active as per the 'main' branch's intention
   restrictTo("customer", "restaurant", "admin"), // Keep active as per the 'main' branch's intention
-  validateCreateOrder,
   createOrder
 );
 
@@ -43,5 +42,10 @@ router.post(
   validateFeedback,
   storeFeedback
 );
-
+router.get(
+  "/:id",
+  protect,
+  restrictTo("customer", "restaurant", "admin", "driver"),
+  getOrderById
+);
 module.exports = router;

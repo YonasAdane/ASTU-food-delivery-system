@@ -44,6 +44,7 @@ const orderSchema = new mongoose.Schema({
     required: true,
   },
   rating: { type: Number, min: 1, max: 5 },
+  note : { type: String, trim: true },
   feedback: { type: String, trim: true },
   deleted: { type: Boolean, default: false },
   createdAt: { type: Date, default: Date.now },
