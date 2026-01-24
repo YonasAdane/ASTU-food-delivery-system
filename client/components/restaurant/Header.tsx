@@ -3,7 +3,15 @@
 import Link from "next/link";
 import { useState } from "react";
 import { usePathname } from "next/navigation";
-import { Menu, X, Home, ShoppingBag, Wallet, Calendar } from "lucide-react";
+import {
+  Menu,
+  X,
+  Home,
+  ShoppingBag,
+  Wallet,
+  Calendar,
+  FolderOpenDot,
+} from "lucide-react";
 import { ModeToggle } from "../common/modeToggle";
 import { useUserStore } from "@/hooks/use-profile";
 import ProfileDropdown from "../users/profileDropdown";
@@ -19,7 +27,7 @@ const generateAvatar = (name?: string, email?: string) => {
 };
 export default function Header() {
   const [open, setOpen] = useState(false);
-  const [profileOpen, setProfileOpen] = useState(false);
+
   const pathname = usePathname();
   const user = useUserStore((state) => state.user);
   const isHomeActive =
@@ -38,42 +46,25 @@ export default function Header() {
       icon: ShoppingBag,
       active: pathname.startsWith("/customer/orders"),
     },
-    {
-      label: "Wallet",
-      href: "/customer/wallet",
-      icon: Wallet,
-      active: pathname.startsWith("/customer/wallet"),
-    },
-    {
-      label: "Meal Plan",
-      href: "/customer/meal-plan",
-      icon: Calendar,
-      active: pathname.startsWith("/customer/meal-plan"),
-    },
   ];
 
   return (
-    <header
-      className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur
-      border-b border-slate-200 dark:border-slate-700 px-4 md:px-10 py-3 shadow-sm"
-    >
+    <header className="sticky top-0 z-50 bg-white/80 dark:bg-slate-900/80 backdrop-blur border-b border-slate-200 dark:border-slate-700 px-4 md:px-10 py-3 shadow-sm">
       <div className="max-w-360 mx-auto flex items-center justify-between gap-4">
-        {/* Logo */}
         <div className="flex items-center gap-3">
-          <div className="size-10 rounded-full bg-primary/10" />
-          <h2 className="text-xl font-bold hidden sm:block">ASTU Food</h2>
-        </div>
+          {/* Logo Circle */}
+          <div className="w-10 h-10 rounded-full bg-orange-500/20 flex items-center justify-center">
+            <span className="text-orange-600 font-bold text-lg">AF</span>
+          </div>
 
-        {/* Desktop Search */}
-        <div className="hidden md:flex flex-1 max-w-xl">
-          <input
-            placeholder="Search for restaurants..."
-            className="w-full h-11 rounded-full px-4 bg-gray-100 dark:bg-gray-800 outline-none"
-          />
+          {/* Logo Text */}
+          <h1 className="text-xl font-bold text-slate-900 dark:text-white">
+            ASTU Food
+          </h1>
         </div>
 
         {/* Desktop Nav */}
-        <nav className="hidden lg:flex gap-6">
+        <nav className="hidden ml-auto lg:flex gap-6">
           {navLinks.map(({ label, href, icon: Icon, active }) => (
             <Link
               key={label}
@@ -91,7 +82,6 @@ export default function Header() {
           ))}
         </nav>
 
-        {/* Right Actions */}
         {/* Right Actions */}
         <div className="flex items-center gap-3">
           <ModeToggle />

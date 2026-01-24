@@ -14,9 +14,9 @@ interface ProfileCardProps {
 }
 
 export function ProfileCard({
-  name = "John Doe",
-  email = "johndoe@astu.edu",
-  memberSince = "2023",
+  name,
+  email,
+  memberSince,
   avatarUrl,
   onNameChange,
   onAvatarChange
