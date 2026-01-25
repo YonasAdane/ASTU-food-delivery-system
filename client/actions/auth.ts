@@ -47,7 +47,7 @@ export async function registerCustomer(
   try {
     // 2️⃣ Call backend API
     const response = await fetch(
-      `${process.env.API_URL}/auth/register`,
+      `${process.env.API_URL}/api/auth/register`,
       {
         method: "POST",
         headers: {
@@ -61,6 +61,9 @@ export async function registerCustomer(
         cache: "no-store",
       }
     )
+    console.log(response);
+    console.log(response.status);
+    console.log(response.statusText);
 
     const data = await response.json()
 

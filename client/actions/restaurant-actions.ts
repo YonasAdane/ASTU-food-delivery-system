@@ -60,7 +60,7 @@ export async function registerRestaurant(
       phone: parsed.data.phone,
 			password: parsed.data.password,
       area: parsed.data.area,
-      deliveryTime: parsed.data.deliveryTime,
+      deliveryTime: parsed.data.deliveryTime.toString(),
       image: parsed.data.image,
       location: {
         type: "Point",

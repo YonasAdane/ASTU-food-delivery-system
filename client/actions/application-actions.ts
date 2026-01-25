@@ -1,6 +1,7 @@
 "use server";
 
 import { apiClient } from "@/lib/api-client";
+import { getErrorMessage } from "@/lib/get-error-message";
 
 interface OwnerInfo {
   _id: string;
@@ -52,7 +53,7 @@ export interface ApplicationQueryParams {
   sort?: string;
 }
 
-export async function getRestaurantApplications(params: ApplicationQueryParams): Promise<RestaurantApplicationResponse> {
+export async function getRestaurantApplications(params: ApplicationQueryParams) {
   try {
     const queryParams = {
       page: params.page,
@@ -64,7 +65,7 @@ export async function getRestaurantApplications(params: ApplicationQueryParams):
 
     const response = await apiClient<{ 
       status: string; 
-      data: { pending: RestaurantApplication[] }; 
+      data:  RestaurantApplication[]; 
       meta: { total: number; page: number; limit: number; pages: number } 
     }>({
       method: "GET",
@@ -72,11 +73,12 @@ export async function getRestaurantApplications(params: ApplicationQueryParams):
       query: queryParams,
     });
 
+    console.log(response);
     // Extract pending restaurants from the response
-    const pendingRestaurants = response.data.pending || [];
+    // const pendingRestaurants = response.data || [];
     
     return {
-      data: pendingRestaurants,
+      data: response.data,
       meta: {
         total: response.meta.total,
         page: response.meta.page,
@@ -86,7 +88,7 @@ export async function getRestaurantApplications(params: ApplicationQueryParams):
     };
   } catch (error) {
     console.error("Error fetching restaurant applications:", error);
-    throw new Error(`Failed to fetch restaurant applications: ${error instanceof Error ? error.message : "Unknown error"}`);
+    return { error: true, message: getErrorMessage(error) };
   }
 }
 
@@ -100,7 +102,7 @@ export async function verifyRestaurant(restaurantId: string) {
     return response;
   } catch (error) {
     console.error("Error verifying restaurant:", error);
-    throw new Error(`Failed to verify restaurant: ${error instanceof Error ? error.message : "Unknown error"}`);
+    return { error: true, message: getErrorMessage(error) };
   }
 }
 
@@ -114,7 +116,7 @@ export async function rejectRestaurant(restaurantId: string) {
     return response;
   } catch (error) {
     console.error("Error rejecting restaurant:", error);
-    throw new Error(`Failed to reject restaurant: ${error instanceof Error ? error.message : "Unknown error"}`);
+    return { error: true, message: getErrorMessage(error) };
   }
 }
 
@@ -128,6 +130,6 @@ export async function getRestaurantApplicationDetails(restaurantId: string) {
     return response.data;
   } catch (error) {
     console.error("Error fetching restaurant application details:", error);
-    throw new Error(`Failed to fetch restaurant application details: ${error instanceof Error ? error.message : "Unknown error"}`);
+    return { error: true, message: getErrorMessage(error) };
   }
 }

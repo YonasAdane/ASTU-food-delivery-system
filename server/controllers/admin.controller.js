@@ -5,6 +5,12 @@ const User = require("../models/Users");
 const Order = require("../models/Order");
 const logger = require("../utils/logger");
 
+function _getErrorMessage(err) {
+  if (err instanceof Error) return err.message;
+  if (err && typeof err === "object" && "message" in err) return String(err.message);
+  return "An unexpected error occurred";
+}
+
 const userRoleSchema = Joi.object({
   role: Joi.string()
     .valid("customer", "restaurant", "driver", "admin")
@@ -46,17 +52,38 @@ const getPlatformStats = async (req, res) => {
   }
 };
 
-// Admin: Get pending restaurants
+// Admin: Get pending restaurants (paginated)
 const pendingRestaurant = async (req, res) => {
   try {
-    const pending = await Restaurant.find({ verified: false, deleted: false });
-    if (!pending.length)
-      return res.status(404).json({ message: "No pending restaurants found" });
-    res.status(200).json({ status: "success", data: { pending } });
+    const { page = 1, limit = 10, search } = req.query;
+
+    const query = { verified: false, deleted: false };
+    if (search) {
+      const regex = new RegExp(String(search), "i");
+      query.$or = [{ name: regex }, { area: regex }];
+    }
+
+    const skip = (Number(page) - 1) * Number(limit);
+
+    const [pending, total] = await Promise.all([
+      Restaurant.find(query).sort({ createdAt: -1 }).skip(skip).limit(Number(limit)),
+      Restaurant.countDocuments(query),
+    ]);
+
+    res.status(200).json({
+      status: "success",
+      data:pending,
+      meta: {
+        total,
+        page: Number(page),
+        limit: Number(limit),
+        pages: Math.max(1, Math.ceil(total / Number(limit) || 1)),
+      },
+    });
     console.log(`Fetched pending restaurants: ${pending.length}`);
   } catch (error) {
     logger.error("Error fetching pending restaurants:", error);
-    res.status(500).json({ message: "Failed to fetch pending restaurants" });
+    res.status(500).json({ error: true, message: _getErrorMessage(error) });
   }
 };
 
