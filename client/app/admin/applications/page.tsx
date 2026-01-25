@@ -34,11 +34,17 @@ export default function ApplicationsPage() {
           page,
           search,
         });
-        setApplications(result.data);
+        // Handle server-action error shape
+        if ((result as any)?.error) {
+          toast.error((result as any).message || "Failed to fetch applications");
+          setApplications([]);
+        } else {
+          setApplications((result as any).data || []);
+        }
         
         // Auto-select the first application if none is selected
-        if (!selectedApplication && result.data.length > 0) {
-          setSelectedApplication(result.data[0]);
+        if (!selectedApplication && result?.data && result?.data?.length > 0) {
+          setSelectedApplication(result?.data[0]);
         }
       } catch (error) {
         console.error("Error fetching applications:", error);
@@ -54,22 +60,30 @@ export default function ApplicationsPage() {
   const handleVerify = async (id: string) => {
     setActionLoading(true);
     try {
-      await verifyRestaurant(id);
-      toast.success("Restaurant verified successfully");
-      
-      // Refresh the applications list
-      const result = await getRestaurantApplications({
-        page,
-        search,
-      });
-      setApplications(result.data);
-      
-      // Update selected application if it was the one verified
-      if (selectedApplication?._id === id) {
-        setSelectedApplication({
-          ...selectedApplication,
-          verified: true
+      const res = await verifyRestaurant(id);
+      if ((res as any)?.error) {
+        toast.error((res as any).message || "Failed to verify restaurant");
+      } else {
+        toast.success("Restaurant verified successfully");
+
+        // Refresh the applications list
+        const result = await getRestaurantApplications({
+          page,
+          search,
         });
+        if ((result as any)?.error) {
+          toast.error((result as any).message || "Failed to refresh applications");
+        } else {
+          setApplications((result as any).data || []);
+        }
+
+        // Update selected application if it was the one verified
+        if (selectedApplication?._id === id) {
+          setSelectedApplication({
+            ...selectedApplication,
+            verified: true,
+          });
+        }
       }
     } catch (error) {
       console.error("Error verifying restaurant:", error);
@@ -82,19 +96,27 @@ export default function ApplicationsPage() {
   const handleReject = async (id: string) => {
     setActionLoading(true);
     try {
-      await rejectRestaurant(id);
-      toast.success("Restaurant rejected successfully");
-      
-      // Refresh the applications list
-      const result = await getRestaurantApplications({
-        page,
-        search,
-      });
-      setApplications(result.data);
-      
-      // Remove from selected if it was the one rejected
-      if (selectedApplication?._id === id) {
-        setSelectedApplication(result.data[0] || null);
+      const res = await rejectRestaurant(id);
+      if ((res as any)?.error) {
+        toast.error((res as any).message || "Failed to reject restaurant");
+      } else {
+        toast.success("Restaurant rejected successfully");
+
+        // Refresh the applications list
+        const result = await getRestaurantApplications({
+          page,
+          search,
+        });
+        if ((result as any)?.error) {
+          toast.error((result as any).message || "Failed to refresh applications");
+        } else {
+          setApplications((result as any).data || []);
+
+          // Remove from selected if it was the one rejected
+          if (selectedApplication?._id === id) {
+            setSelectedApplication((result as any).data[0] || null);
+          }
+        }
       }
     } catch (error) {
       console.error("Error rejecting restaurant:", error);
@@ -114,7 +136,7 @@ export default function ApplicationsPage() {
   }
   
   return (
-    <div className="max-w-[1200px] mx-auto h-full flex flex-col">
+    <div className="min-w-6xl mx-auto h-full flex flex-col">
       <ApplicationFilters 
         onSearchChange={handleSearchChange}
         currentSearch={search}
@@ -123,26 +145,44 @@ export default function ApplicationsPage() {
       {/* Split View Layout */}
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 flex-1 min-h-0 pt-6">
         {/* List Column */}
-        <div className="lg:col-span-4 flex flex-col gap-3 overflow-y-auto pr-1 pb-4 h-full">
-          {applications.map((application) => (
-            <ApplicationListItem
-              key={application._id}
-              application={application}
-              isActive={selectedApplication?._id === application._id}
-              onClick={() => setSelectedApplication(application)}
-            />
-          ))}
+        {applications.length === 0 ? (
+        <div className="lg:col-span-12 gap-3 py-20 overflow-y-auto pr-1 pb-4 h-full">
+          <div className="flex flex-col items-center justify-center flex-1">
+            <p className="text-text-muted dark:text-gray-400">No applications found</p>
+          </div>
         </div>
-        
-        {/* Details Panel */}
-        <div className="lg:col-span-8 h-full flex flex-col">
-          <ApplicationDetails
-            application={selectedApplication || applications[0] || {} as RestaurantApplication}
-            onVerify={handleVerify}
-            onReject={handleReject}
-            loading={actionLoading}
-          />
-        </div>
+        ):(
+          <>
+            <div className="lg:col-span-4 flex flex-col gap-3 overflow-y-auto pr-1 pb-4 h-full">
+              {applications.map((application) => (
+                <ApplicationListItem
+                  key={application._id}
+                  application={application}
+                  isActive={selectedApplication?._id === application._id}
+                  onClick={() => setSelectedApplication(application)}
+                />
+              ))}
+              {applications.length === 0 && (
+                <div className="flex flex-col items-center justify-center flex-1">
+                  <p className="text-text-muted dark:text-gray-400">No applications found</p>
+                </div>
+              )}
+            </div>
+            
+            {/* Details Panel */}
+            <div className="lg:col-span-8 h-full flex flex-col">
+              <ApplicationDetails
+                application={selectedApplication || applications[0] || {} as RestaurantApplication}
+                onVerify={handleVerify}
+                onReject={handleReject}
+                loading={actionLoading}
+              />
+            </div>
+          </>
+        )}
+        {/* {selectedApplication&&(
+
+        )} */}
       </div>
       
       {/* Theme Toggle */}

@@ -26,8 +26,8 @@ export function ApplicationListItem({
     <Card 
       className={`p-4 rounded-xl cursor-pointer transition-all ${
         isActive 
-          ? 'bg-white shadow-md border-l-4 border-primary scale-[1.01]' 
-          : 'bg-white shadow-sm border border-transparent hover:border-primary/30'
+          ? 'bg-card shadow-md border-l-4 border-primary scale-[1.01]' 
+          : 'bg-card shadow-sm border border-transparent hover:border-primary/30'
       }`}
       onClick={onClick}
     >

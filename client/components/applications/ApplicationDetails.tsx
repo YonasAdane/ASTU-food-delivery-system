@@ -1,17 +1,12 @@
-import { Card } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
 import { RestaurantApplication } from "@/actions/application-actions";
-import { 
-  StoreIcon, 
-  FolderOpenIcon, 
-  MapPinIcon, 
-  UserIcon, 
-  UtensilsIcon, 
-  ClockIcon, 
-  HomeIcon,
+import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
+import {
   GlobeIcon,
   MailIcon,
-  PhoneIcon
+  MapPinIcon,
+  PhoneIcon,
+  StoreIcon
 } from "lucide-react";
 
 interface ApplicationDetailsProps {
@@ -29,7 +24,7 @@ export function ApplicationDetails({
 }: ApplicationDetailsProps) {
   if (!application) {
     return (
-      <div className="bg-white rounded-2xl shadow-sm border border-border-color overflow-hidden flex flex-col h-full items-center justify-center">
+      <div className=" rounded-2xl shadow-sm border border-border-color overflow-hidden flex flex-col h-full items-center justify-center">
         <p className="text-text-muted dark:text-gray-400">Select a restaurant to review</p>
       </div>
     );
@@ -46,19 +41,25 @@ export function ApplicationDetails({
   return (
     <Card className="rounded-2xl shadow-sm border border-border-color overflow-hidden flex flex-col h-full bg-white dark:bg-gray-800 dark:border-gray-700">
       {/* Hero Image */}
-      <div 
+      {/* <div 
         className="h-32 w-full bg-cover bg-center relative group"
         style={{ backgroundImage: `url(${application.coverImage || application.image || '/placeholder-hero.jpg'})` }}
       >
         <div className="absolute inset-0 bg-black/20 group-hover:bg-black/10 transition-colors"></div>
-      </div>
+      </div> */}
       
       {/* Content */}
       <div className="flex-1 overflow-y-auto relative">
         {/* Header Info */}
         <div className="px-8 pb-6 border-b border-border-color dark:border-gray-700">
-          <div className="flex justify-between items-end -mt-10 mb-4 relative z-10">
-            <div className="size-20 rounded-xl border-4 border-white bg-white shadow-md overflow-hidden">
+          <div className="flex justify-between items-end  ">
+            <div>
+            <h1 className="text-2xl font-bold text-text-main dark:text-white">{application.name}</h1>
+            <p className="text-text-muted mt-1 dark:text-gray-300">
+              {application.area || "Restaurant details coming soon..."}
+            </p>
+          </div>
+            {/* <div className="size-20 rounded-xl border-4 border-white bg-white shadow-md overflow-hidden">
               <img 
                 className="w-full h-full object-cover" 
                 src={application.image || "/placeholder-logo.jpg"} 
@@ -69,11 +70,11 @@ export function ApplicationDetails({
                   target.src = "/placeholder-logo.jpg";
                 }}
               />
-            </div>
+            </div> */}
             <div className="flex gap-2 mb-1">
               <a 
                 className="flex items-center justify-center size-8 rounded-full bg-background-light text-text-muted hover:bg-primary/10 hover:text-primary transition-colors dark:bg-gray-700 dark:text-gray-300"
-                href={`https://${application.name.toLowerCase().replace(/\s+/g, '')}.com`}
+                href={`https://${application?.name?.toLowerCase().replace(/\s+/g, '')}.com`}
                 target="_blank"
                 rel="noopener noreferrer"
               >
@@ -93,23 +94,23 @@ export function ApplicationDetails({
               </a>
             </div>
           </div>
-          <div>
+          {/* <div>
             <h1 className="text-2xl font-bold text-text-main dark:text-white">{application.name}</h1>
             <p className="text-text-muted mt-1 dark:text-gray-300">
               {application.area || "Restaurant details coming soon..."}
             </p>
-          </div>
+          </div> */}
         </div>
         
         {/* Details Grid */}
-        <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
+        <div className="p-8 grid gap-8">
           {/* Section: Restaurant Details */}
-          <div className="space-y-4">
+          <div className="space-y-4 w-full">
             <h3 className="text-sm font-bold text-text-main uppercase tracking-wider flex items-center gap-2 dark:text-white">
               <StoreIcon className="text-primary text-[18px]" />
               Restaurant Details
             </h3>
-            <div className="space-y-3">
+            <div className="space-y-3 grid md:grid-cols-2 lg:grid-cols-3 w-full">
               <div className="flex flex-col">
                 <span className="text-xs text-text-muted dark:text-gray-400">Owner Name</span>
                 <span className="text-sm font-medium text-text-main dark:text-white">
@@ -123,42 +124,42 @@ export function ApplicationDetails({
               <div className="flex flex-col">
                 <span className="text-xs text-text-muted dark:text-gray-400">Owner Email</span>
                 <span className="text-sm font-medium text-text-main dark:text-white">
-                  {typeof application.ownerId === 'object' 
-                    ? application.ownerId.email 
-                    : application.ownerEmail || "N/A"}
+                  {typeof application?.ownerId === 'object' 
+                    ? application?.ownerId.email 
+                    : application?.ownerEmail || "N/A"}
                 </span>
               </div>
               <div className="flex flex-col">
-                <span className="text-xs text-text-muted dark:text-gray-400">Owner Phone</span>
+                <span className="text-xs text-text-muted dark:text-gray-400">Phone</span>
                 <span className="text-sm font-medium text-text-main dark:text-white">
-                  {typeof application.ownerId === 'object' 
-                    ? application.ownerId.phone 
-                    : application.ownerPhone || "N/A"}
+                  {typeof application?.ownerId === 'object' 
+                    ? application?.ownerId.phone 
+                    : application?.ownerPhone || "N/A"}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-xs text-text-muted dark:text-gray-400">Cuisine Type</span>
                 <span className="text-sm font-medium text-text-main dark:text-white">
-                  {application.area || "N/A"}
+                  {application?.area || "N/A"}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-xs text-text-muted dark:text-gray-400">Delivery Time</span>
                 <span className="text-sm font-medium text-text-main dark:text-white">
-                  {application.deliveryTime || "N/A"}
+                  {application?.deliveryTime || "N/A"}
                 </span>
               </div>
               <div className="flex flex-col">
                 <span className="text-xs text-text-muted dark:text-gray-400">Address</span>
                 <span className="text-sm font-medium text-text-main dark:text-white">
-                  {application.location.address || "N/A"}
+                  {application?.location?.address || "N/A"}
                 </span>
               </div>
             </div>
           </div>
           
           {/* Section: Documents */}
-          <div className="space-y-4">
+          {/* <div className="space-y-4">
             <h3 className="text-sm font-bold text-text-main uppercase tracking-wider flex items-center gap-2 dark:text-white">
               <FolderOpenIcon className="text-primary text-[18px]" />
               Verification Documents
@@ -213,7 +214,7 @@ export function ApplicationDetails({
                 </span>
               </div>
             </div>
-          </div>
+          </div> */}
         </div>
         
         {/* Map / Location Placeholder */}

@@ -69,7 +69,7 @@ export function DriverCard({ driver, onMessage, onViewProfile }: DriverCardProps
   return (
     <Card 
       className={cn(
-        "group flex flex-col bg-white rounded-xl shadow-sm border border-[#e6e0db] hover:shadow-md transition-shadow overflow-hidden",
+        "group flex flex-col bg-background rounded-xl shadow-sm border bg-white shadow-sm border border-[#e6e0db] dark:bg-gray-800 dark:border-gray-700 hover:shadow-md transition-shadow overflow-hidden",
         driver.status === "unavailable" && "opacity-90"
       )}
     >
