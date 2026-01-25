@@ -2,16 +2,14 @@
 
 import { useState, useEffect } from "react";
 import axios from "axios";
-import { Power, CheckCircle, Wallet, AlertCircle } from "lucide-react";
-
+import { Power, CheckCircle, Wallet, AlertCircle, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useUserStore } from "@/hooks/use-profile";
-
 import ProfileDropdown from "@/components/users/profileDropdown";
 import { ModeToggle } from "@/components/common/modeToggle";
+
 const generateAvatar = (name?: string, email?: string) => {
   const displayName = name || email || "User";
-
   const background = "6366f1";
   const color = "fff";
   return `https://ui-avatars.com/api/?name=${encodeURIComponent(
@@ -20,32 +18,45 @@ const generateAvatar = (name?: string, email?: string) => {
 };
 
 export default function DriverDashboard() {
-  const [status, setStatus] = useState("unavailable"); // available | unavailable
+  const [status, setStatus] = useState("unavailable");
   const [stats, setStats] = useState<any>(null);
   const [loading, setLoading] = useState(true);
 
+  // 1. Get user from store
   const user = useUserStore((state) => state.user);
-  const driverId = user?._id || "DRIVER_ID";
 
   useEffect(() => {
-    // Fetch initial stats
+    // 2. STOP if user isn't loaded yet or doesn't have an ID
+    if (!user || !user._id) {
+        return; 
+    }
+
     const fetchDashboard = async () => {
       try {
         const res = await axios.get(
-          `${process.env.NEXT_PUBLIC_API_URL}/drivers/${driverId}/earnings`,
+          `${process.env.NEXT_PUBLIC_API_URL}/drivers/${user._id}/earnings`,
           { withCredentials: true },
         );
         setStats(res.data.data);
       } catch (err) {
-        console.error(err);
+        console.error("Error fetching stats:", err);
       } finally {
         setLoading(false);
       }
     };
+
     fetchDashboard();
-  }, []);
+    
+    // 3. IMPORTANT: Add user._id to dependency array
+    // This ensures the code runs again once the store loads the real user
+  }, [user?._id]); 
+
+  // --- Handlers ---
 
   const toggleStatus = async () => {
+    // Safety check for button click too
+    if (!user?._id) return toast.error("User not fully loaded yet");
+
     const newStatus = status === "available" ? "unavailable" : "available";
     try {
       await axios.patch(
@@ -60,12 +71,17 @@ export default function DriverDashboard() {
     }
   };
 
+  // Optional: Show skeleton while waiting for user store
+  if (!user) {
+     return <div className="p-10 flex justify-center"><Loader2 className="animate-spin" /></div>;
+  }
+
   return (
     <div className="p-6 space-y-6">
       <div className="flex justify-between items-center">
         <div>
           <h1 className="text-2xl font-black text-slate-900 dark:text-white">
-            Hello, Driver 👋
+            Hello, {user?.email || "Driver"} 👋
           </h1>
           <p className="text-slate-500 text-sm">Ready to work today?</p>
         </div>
@@ -84,6 +100,7 @@ export default function DriverDashboard() {
       {/* STATUS TOGGLE */}
       <button
         onClick={toggleStatus}
+        disabled={loading}
         className={`w-full py-6 rounded-3xl shadow-lg border-2 flex items-center justify-center gap-4 transition-all ${
           status === "available"
             ? "bg-green-500 border-green-400 text-white shadow-green-500/30"
@@ -120,8 +137,6 @@ export default function DriverDashboard() {
           </p>
         </div>
       </div>
-
-      {/* ALERT / NOTICE */}
     </div>
   );
 }

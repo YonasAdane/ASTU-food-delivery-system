@@ -1,4 +1,4 @@
-import Sidebar from "@/components/sidebar/sidebar";
+import Sidebar from "@/components/sidebar/restaurant-sidebar";
 
 export default function RestaurantLayout({
   children,
