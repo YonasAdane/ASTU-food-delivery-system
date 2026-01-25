@@ -20,6 +20,8 @@ export type EditUserFormValues = z.infer<typeof editUserSchema>;
 
 export interface User {
   _id: string;
+  firstName?: string;
+  lastName?: string;
   email: string;
   phone: string;
   role: "admin" | "restaurant" | "customer" | "driver";

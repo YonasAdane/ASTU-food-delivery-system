@@ -68,7 +68,7 @@ const ProfileDropdown = ({
           </div>
         </div>
 
-        <DropdownMenuItem onClick={() => router.push("/customer/profile")} className="cursor-pointer">
+        <DropdownMenuItem onClick={() => router.push(`/${role}/profile`)} className="cursor-pointer">
           View Profile
         </DropdownMenuItem>
 
