@@ -85,16 +85,6 @@ export default function DriverDashboard() {
           </h1>
           <p className="text-slate-500 text-sm">Ready to work today?</p>
         </div>
-        <div className="ml-auto flex gap-2">
-          <ModeToggle />
-          <ProfileDropdown
-            avatar={generateAvatar(user?.email)}
-            email={user?.email}
-            phone={user?.phone}
-            role={user?.role}
-            createdAt={user?.createdAt}
-          />
-        </div>
       </div>
 
       {/* STATUS TOGGLE */}

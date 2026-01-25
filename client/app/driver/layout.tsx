@@ -1,50 +1,54 @@
 "use client";
 
-import Link from "next/link";
-import { usePathname } from "next/navigation";
-import { LayoutDashboard, ListOrdered, Wallet, User, MapPin } from "lucide-react";
 import DriverLocationTracker from "@/components/drivers/DriverLocationTracker";
-import {useUserStore} from "@/hooks/use-profile";
-export default function DriverLayout({ children }: { children: React.ReactNode }) {
-  const pathname = usePathname();
+import { useUserStore } from "@/hooks/use-profile";
+import DriverNavBar from "@/components/drivers/DriverNavbar";
+import { ModeToggle } from "@/components/common/modeToggle";
+import ProfileDropdown from "@/components/users/profileDropdown";
+
+const generateAvatar = (name?: string, email?: string) => {
+  const displayName = name || email || "User";
+  return `https://ui-avatars.com/api/?name=${encodeURIComponent(
+    displayName
+  )}&background=6366f1&color=fff`;
+};
+
+export default function DriverLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   const user = useUserStore((state) => state.user);
-
-  const driverId = user?._id || "DRIVER_ID";
-  console.log("Driver Layout Rendered with driverId:", driverId);
-
-  const navItems = [
-    { icon: LayoutDashboard, label: "Dashboard", href: "/driver/dashboard" },
-    { icon: ListOrdered, label: "Orders", href: "/driver/orders" },
-    { icon: Wallet, label: "Earnings", href: "/driver/earnings" },
-  ];
+  const driverId = user?._id;
 
   return (
-    <div className="min-h-screen bg-gray-50 dark:bg-slate-950 pb-20">
-      {/* Background Location Tracker */}
-      <DriverLocationTracker driverId={driverId} />
+    <div className="min-h-screen bg-gray-50 dark:bg-slate-950">
+      
+      {/* 1. Tracker (Invisible Logic) */}
+      {driverId && <DriverLocationTracker driverId={driverId} />}
 
-      <main>{children}</main>
-
-      {/* Bottom Navigation Bar */}
-      <div className="fixed bottom-0 left-0 w-full bg-white dark:bg-slate-900 border-t border-gray-200 dark:border-slate-800 pb-safe z-50">
-        <div className="flex justify-around items-center p-3">
-          {navItems.map((item) => {
-            const isActive = pathname === item.href;
-            return (
-              <Link
-                key={item.href}
-                href={item.href}
-                className={`flex flex-col items-center gap-1 p-2 rounded-xl transition-all ${
-                  isActive ? "text-orange-600 bg-orange-50 dark:bg-slate-800" : "text-slate-400"
-                }`}
-              >
-                <item.icon size={24} strokeWidth={isActive ? 2.5 : 2} />
-                <span className="text-[10px] font-bold">{item.label}</span>
-              </Link>
-            );
-          })}
+      {/* 2. Navigation (Sidebar on Desktop, Bottom Bar on Mobile) */}
+      <DriverNavBar />
+      <main className="md:pl-64 pb-24 transition-all duration-300 min-h-screen ">
+        
+    
+    
+        {/* --- PAGE CONTENT --- */}
+        <div className="max-w-7xl mx-auto w-full p-4 md:p-6 ">
+           <div className="flex flex-row items-center gap-3">
+            <ModeToggle />
+            <ProfileDropdown
+              avatar={generateAvatar(user?.firstName, user?.email)}
+              email={user?.email}
+              phone={user?.phone}
+              role={user?.role}
+              createdAt={user?.createdAt}
+            />
+          </div>
+          {children}
         </div>
-      </div>
+        
+      </main>
     </div>
   );
 }
