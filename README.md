@@ -1,6 +1,6 @@
 # ASTU Food Delivery System
 
-A full-stack food delivery system built as a project for ASTU. The application is implemented primarily in TypeScript with supporting JavaScript, HTML, and CSS. It provides functionality for browsing restaurants and menus, placing orders, and managing deliveries.
+A full-stack food delivery system built as a project for ASTU. The application is implemented primarily Next.js and Express.js. It provides functionality for browsing restaurants and menus, placing orders, and managing deliveries.
 
 ## Features
 
