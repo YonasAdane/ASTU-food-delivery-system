@@ -18,6 +18,7 @@ const {
   invalidateUserSessions,
   getAllOrders,
   updateOrderStatus,
+  getDashboard,
 } = require("../controllers/admin.controller");
 const protect = require("../middlewares/auth.middleware");
 const restrictTo = require("../middlewares/restrictTo");
@@ -30,6 +31,8 @@ router.get("/restaurants/pending", protect, restrictTo("admin"), pendingRestaura
 router.patch("/restaurants/:id/verify", protect, restrictTo("admin"), verifyRestaurant);
 router.patch("/restaurants/:id/reject", protect, restrictTo("admin"), rejectRestaurant);
 router.get("/restaurants", protect, restrictTo("admin"), getAllRestaurants);
+// Dashboard metrics (internal/public proxy) - does not require admin auth so internal services can fetch it
+router.get("/dashboard", getDashboard);
 router.get("/stats", protect, restrictTo("admin"), getPlatformStats);
 router.patch("/users/:id/suspend", protect, restrictTo("admin"), suspendUser);
 router.get("/orders/complaints", protect, restrictTo("admin"), getComplaints);

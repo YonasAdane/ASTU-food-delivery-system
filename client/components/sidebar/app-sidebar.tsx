@@ -69,12 +69,12 @@ const data: SidebarData = {
       url: "/admin/applications",
       icon: HandHelping,
     },
-    {
-      id: "reports",
-      title: "Report",
-      url: "/admin/reports",
-      icon: ChartNoAxesColumnIncreasing,
-    },
+    // {
+    //   id: "reports",
+    //   title: "Report",
+    //   url: "/admin/reports",
+    //   icon: ChartNoAxesColumnIncreasing,
+    // },
   ],
   navCollapsible: {
     favorites: [

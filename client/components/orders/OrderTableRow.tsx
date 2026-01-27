@@ -37,7 +37,7 @@ export function OrderTableRow({
       <TableCell>
         <div className="flex items-center gap-2">
           <User className="h-4 w-4 text-muted-foreground" />
-          <span>{order.customerId.name}</span>
+          <span>{order.customerId.email}</span>
         </div>
       </TableCell>
 

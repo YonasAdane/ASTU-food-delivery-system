@@ -52,6 +52,105 @@ const getPlatformStats = async (req, res) => {
   }
 };
 
+// Admin: Dashboard aggregated metrics (public for internal API proxy)
+const getDashboard = async (req, res) => {
+  try {
+    // Optional query param `days` to restrict metrics to the last N days
+    const days = req.query?.days ? Number(req.query.days) : null;
+    const now = new Date();
+    let startDate = null;
+    if (days && Number.isFinite(days) && days > 0) {
+      startDate = new Date(now);
+      startDate.setHours(0, 0, 0, 0);
+      startDate.setDate(startDate.getDate() - (days - 1));
+    }
+
+    const userQuery = startDate ? { createdAt: { $gte: startDate } } : {};
+    const restaurantQuery = startDate ? { createdAt: { $gte: startDate } } : {};
+    const orderQuery = startDate ? { createdAt: { $gte: startDate } } : {};
+    const ticketQuery = startDate ? { createdAt: { $gte: startDate } } : {};
+
+    // Users
+    const totalUsers = await User.countDocuments(userQuery);
+    const customers = await User.countDocuments({ ...userQuery, role: 'customer' });
+    const drivers = await User.countDocuments({ ...userQuery, role: 'driver' });
+    const activeDrivers = await User.countDocuments({ ...userQuery, role: 'driver', status: 'available' });
+    const admins = await User.countDocuments({ ...userQuery, role: 'admin' });
+
+    // Restaurants
+    const totalRestaurants = await Restaurant.countDocuments(restaurantQuery);
+    const openRestaurants = await Restaurant.countDocuments({ ...restaurantQuery, $or: [{ status: 'open' }, { isOpen: true }] });
+    const pendingRestaurants = await Restaurant.countDocuments({ ...restaurantQuery, $or: [{ status: 'pending' }, { verified: false }] });
+
+    // Orders
+    const totalOrders = await Order.countDocuments(orderQuery);
+    const todayStart = new Date();
+    todayStart.setHours(0,0,0,0);
+    const ordersToday = await Order.countDocuments(startDate ? { createdAt: { $gte: todayStart } } : {});
+
+    const revenuePipeline = [];
+    if (Object.keys(orderQuery).length) revenuePipeline.push({ $match: orderQuery });
+    revenuePipeline.push({ $group: { _id: null, totalRevenue: { $sum: '$total' } } });
+    const revenueAgg = await Order.aggregate(revenuePipeline);
+    const revenue = revenueAgg[0]?.totalRevenue || 0;
+
+    const ordersByStatusPipeline = [];
+    if (Object.keys(orderQuery).length) ordersByStatusPipeline.push({ $match: orderQuery });
+    ordersByStatusPipeline.push({ $group: { _id: '$status', count: { $sum: 1 } } });
+    const ordersByStatusAgg = await Order.aggregate(ordersByStatusPipeline);
+    const ordersByStatus = (ordersByStatusAgg || []).reduce((acc, r) => { acc[r._id] = r.count; return acc }, {});
+
+    const recentOrdersQuery = startDate ? { createdAt: { $gte: startDate } } : {};
+    const recentOrders = await Order.find(recentOrdersQuery).sort({ createdAt: -1 }).limit(8).select('total status createdAt customerId').populate("customerId", "name email").lean();
+
+    // Tickets
+    const SupportTicket = require('../models/SupportTicket');
+    const openTickets = await SupportTicket.countDocuments({ ...ticketQuery, status: 'open' });
+    const inProgressTickets = await SupportTicket.countDocuments({ ...ticketQuery, status: 'in_progress' });
+    const recentTickets = await SupportTicket.find(ticketQuery).select("customerId title status createdAt").populate("customerId", "name email").sort({ createdAt: -1 }).limit(6).lean();
+
+    // Daily series for revenue (used by charts). Only when days specified.
+    let dailySeries = [];
+    if (startDate) {
+      const seriesPipeline = [
+        { $match: { createdAt: { $gte: startDate } } },
+        { $group: { _id: { $dateToString: { format: "%Y-%m-%d", date: "$createdAt" } }, total: { $sum: "$total" } } },
+        { $sort: { _id: 1 } },
+      ];
+
+      const seriesAgg = await Order.aggregate(seriesPipeline);
+      // Build a map of date -> total
+      const seriesMap = {};
+      seriesAgg.forEach(s => { seriesMap[s._id] = s.total; });
+
+      // Fill array for each day in range
+      for (let i = 0; i < days; i++) {
+        const d = new Date(startDate);
+        d.setDate(startDate.getDate() + i);
+        const key = d.toISOString().slice(0,10);
+        dailySeries.push(seriesMap[key] || 0);
+      }
+    }
+
+    // When returning series, scale to percent of max so frontend bar component can render heights
+    let seriesPct = [];
+    if (dailySeries.length) {
+      const max = Math.max(...dailySeries, 0) || 1;
+      seriesPct = dailySeries.map(v => Math.round((v / max) * 100));
+    }
+
+    return res.status(200).json({
+      users: { total: totalUsers, customers, drivers, activeDrivers, admins },
+      restaurants: { total: totalRestaurants, open: openRestaurants, pendingVerification: pendingRestaurants },
+      orders: { total: totalOrders, today: ordersToday, revenue, byStatus: ordersByStatus, recent: recentOrders, series: seriesPct, rawSeries: dailySeries },
+      tickets: { open: openTickets, inProgress: inProgressTickets, recent: recentTickets },
+    });
+  } catch (err) {
+    logger.error('Error building dashboard:', err.message || err);
+    return res.status(500).json({ message: 'Error fetching dashboard metrics' });
+  }
+};
+
 // Admin: Get pending restaurants (paginated)
 const pendingRestaurant = async (req, res) => {
   try {
@@ -588,6 +687,7 @@ module.exports = {
   getUserByRoles,
   getAllRestaurants,
   getPlatformStats,
+  getDashboard,
   suspendUser,
   getComplaints,
   resolveComplaint,
