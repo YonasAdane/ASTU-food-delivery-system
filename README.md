@@ -7,15 +7,16 @@ A full-stack food delivery system built as a project for ASTU. The application i
 - Browse restaurants and menus
 - User authentication (sign up / sign in)
 - Place and track orders
-- Admin dashboard for managing restaurants, menus, and orders
+- Admin dashboard for managing users, restaurant and the system
+- Restaurant dashboard for managin a restaurant,menu, driver and orders
 - Responsive web frontend and RESTful backend APIs
 
 ## Tech stack
 
 - Language: TypeScript (primary), JavaScript
-- Frontend: HTML, CSS, TypeScript
+- Frontend: Next.js + TypeScript
 - Backend: Node.js + TypeScript (Express or similar)
-- Database: (e.g., PostgreSQL, MongoDB) — configure in environment variables
+- Database: MongoDB
 
 ## Getting started
 
@@ -25,6 +26,8 @@ These are general steps to run the project locally. Adjust commands to match the
 
    git clone https://github.com/YonasAdane/ASTU-food-delivery-system.git
    cd ASTU-food-delivery-system
+   cd cliet for the frontend or
+   cd server for the backend
 
 2. Install dependencies
 
@@ -35,10 +38,16 @@ These are general steps to run the project locally. Adjust commands to match the
 3. Configure environment
 
 Create a `.env` file in the project root (or backend/frontend folders) and set the required environment variables. Common variables:
-
-- DATABASE_URL or DB_HOST, DB_USER, DB_PASS
-- JWT_SECRET
-- PORT
+for client
+NEXT_PUBLIC_API_URL
+for server
+MONGO_URI="mongodb://localhost:27017/capstone-delivery"
+CLIENT_URL
+JWT_SECRET
+JWT_REFRESH_SECRET
+REDIS_URL
+EMAIL_USER
+EMAIL_PASS
 
 4. Build (if TypeScript needs compilation)
 
@@ -54,11 +63,11 @@ Create a `.env` file in the project root (or backend/frontend folders) and set t
 
    npm test
 
-## Project structure (typical)
+## Project structure
 
-- /backend - server-side code (TypeScript)
-- /frontend - client-side code (TypeScript, HTML, CSS)
-- /scripts - build or deployment scripts
+- /server - server-side code (TypeScript)
+- /client - client-side code (TypeScript, HTML, CSS)
+
 
 Adjust folders above to match this repository's layout.
 
@@ -70,10 +79,6 @@ Contributions are welcome. Please open an issue to discuss major changes and fol
 2. Create a feature branch (git checkout -b feature/my-feature)
 3. Commit your changes and push to your branch
 4. Open a pull request describing your changes
-
-## License
-
-Specify a license for the project (e.g., MIT). If none is chosen, add one to the repository.
 
 ## Notes
 
