@@ -32,7 +32,7 @@ export function UserFilters() {
         <div>
           {/* <label className="block text-sm font-medium mb-1">Quick Filter</label> */}
           <div className="bg-muted border-input text-muted-foreground inline-flex h-9 w-fit items-center justify-center rounded-lg p-[3px]">
-            {["all", "customer", "driver", "restaurant", "admin"].map((r) => (
+            {["all", "customer", "admin"].map((r) => (
               <button
                 key={r}
                 onClick={() => { setRole(r); setPage(1); }}
